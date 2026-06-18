@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en" data-variant="daylight" data-accent="bright" data-font="grotesk" data-bodyfont="inter" data-density="comfortable">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Time Oracle Playground — Clockchain</title>
+  <meta name="description" content="Log a moment to the chain and get back a verifiable, second-anchored timestamp. Try the Clockchain time oracle live." />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="assets/favicon-512.png" />
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=20" />
+  <link rel="stylesheet" href="playground.css?v=1" />
+  <script>
+    /* Honor the visitor's saved theme (variant / accent / type) so the
+       playground matches whatever they chose on the main site. */
+    (function(){
+      var root=document.documentElement;
+      function setV(v){
+        if(v==='hybrid'){root.setAttribute('data-variant','daylight');root.setAttribute('data-hybrid','1');}
+        else{root.setAttribute('data-variant',v);root.removeAttribute('data-hybrid');}
+      }
+      try{
+        var saved=JSON.parse(localStorage.getItem('clockchain-merged-tweaks-v2')||'null');
+        if(saved){
+          if(saved.variant)setV(saved.variant);
+          if(saved.accent)root.setAttribute('data-accent',saved.accent);
+          if(saved.displayFont)root.setAttribute('data-font',saved.displayFont);
+          if(saved.bodyFont)root.setAttribute('data-bodyfont',saved.bodyFont);
+          if(saved.density)root.setAttribute('data-density',saved.density);
+        }
+      }catch(e){}
+    })();
+  </script>
+</head>
+<body class="pg-page">
+
+  <a class="skip-link" href="#pg-workspace">Skip to the playground</a>
+
+  <!-- ===== NAV (links back to the main site) ===== -->
+  <nav class="nav scrolled">
+    <a class="nav-logo" href="index.html" aria-label="Clockchain — home"><img src="assets/clockchain-logo-full.png" alt="Clockchain" /></a>
+    <ul class="nav-links">
+      <li><a href="index.html#problem">Challenge</a></li>
+      <li><a href="index.html#solution">Solution</a></li>
+      <li><a href="index.html#services">Services</a></li>
+      <li><a href="index.html#blog">Blog</a></li>
+      <li><a href="index.html#news">News</a></li>
+      <li><a href="https://services.clockchain.network/" target="_blank" rel="noopener">Testnet</a></li>
+    </ul>
+    <div class="nav-right">
+      <nav class="nav-socials" aria-label="Clockchain on social media">
+        <a href="https://t.me/ClockchainTime" target="_blank" rel="noopener" aria-label="Clockchain on Telegram"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.04 15.4 8.9 19.2c.4 0 .57-.17.77-.37l1.86-1.78 3.86 2.83c.71.39 1.21.18 1.4-.65l2.53-11.85c.23-1.04-.38-1.45-1.06-1.2L3.5 10.18c-1 .39-.99.94-.18 1.19l3.66 1.14 8.5-5.36c.4-.25.77-.11.47.14"/></svg></a>
+        <a href="https://discord.com/invite/daHCN5qMtN" target="_blank" rel="noopener" aria-label="Clockchain on Discord"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.363 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg></a>
+        <a href="https://x.com/clockchain_time" target="_blank" rel="noopener" aria-label="Clockchain on X (formerly Twitter)"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.66l-5.214-6.817-5.967 6.817H1.677l7.73-8.835L1.254 2.25h6.829l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+      </nav>
+      <a class="nav-cta" href="mailto:info@d4d.group">Contact<svg viewBox="0 0 24 24"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+      <button class="nav-burger" id="nav-burger" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <!-- ===== MOBILE MENU ===== -->
+  <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+    <nav class="mm-links" aria-label="Primary (mobile)">
+      <a href="index.html#problem">Challenge</a>
+      <a href="index.html#solution">Solution</a>
+      <a href="index.html#services">Services</a>
+      <a href="index.html#blog">Blog</a>
+      <a href="index.html#news">News</a>
+      <a href="https://services.clockchain.network/" target="_blank" rel="noopener">Testnet</a>
+    </nav>
+    <a class="mm-cta" href="mailto:info@d4d.group">Contact us<svg viewBox="0 0 24 24"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
+    <nav class="mm-socials" aria-label="Clockchain on social media">
+      <a href="https://t.me/ClockchainTime" target="_blank" rel="noopener" aria-label="Clockchain on Telegram"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.04 15.4 8.9 19.2c.4 0 .57-.17.77-.37l1.86-1.78 3.86 2.83c.71.39 1.21.18 1.4-.65l2.53-11.85c.23-1.04-.38-1.45-1.06-1.2L3.5 10.18c-1 .39-.99.94-.18 1.19l3.66 1.14 8.5-5.36c.4-.25.77-.11.47.14"/></svg></a>
+      <a href="https://discord.com/invite/daHCN5qMtN" target="_blank" rel="noopener" aria-label="Clockchain on Discord"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.363 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg></a>
+      <a href="https://x.com/clockchain_time" target="_blank" rel="noopener" aria-label="Clockchain on X (formerly Twitter)"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.66l-5.214-6.817-5.967 6.817H1.677l7.73-8.835L1.254 2.25h6.829l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+    </nav>
+  </div>
+
+  <main id="main-content">
+    <div class="container-wide">
+
+      <!-- ===== HERO ===== -->
+      <header class="pg-hero">
+        <span class="pg-eyebrow">
+          <span class="live-dot"></span>Time Stamping
+          <span class="sep">·</span>
+          <span class="pg-clock" id="t-utc">--:--:-- UTC</span>
+        </span>
+        <h1>Log something to the chain — <em>get back proof.</em></h1>
+        <p class="body-lg">Enter anything you want to anchor in time. Clockchain writes it to a second-anchored block and returns a verifiable timestamp no one can alter. This is a live, in-browser demo using simulated responses.</p>
+      </header>
+
+      <!-- ===== WORKSPACE ===== -->
+      <div class="pg-workspace" id="pg-workspace" data-mview="result">
+
+        <!-- Input zone -->
+        <section class="pg-zone pg-zone--input" aria-label="Request input">
+          <div class="pg-card pg-input-card">
+            <span class="pg-zone-label">Your request</span>
+            <label class="pg-field-label" for="pg-input">What do you want to log?</label>
+            <div class="pg-input-wrap">
+              <input class="pg-input" id="pg-input" type="text" autocomplete="off" spellcheck="false"
+                     value="Q3 board resolution — final signed copy"
+                     placeholder="e.g. Contract v4 — executed copy" />
+            </div>
+            <p class="pg-input-hint">Anything works — a document name, a hash, a sensor reading. We send it as <code>{ "data": "…" }</code>.</p>
+            <div class="pg-run-row">
+              <button class="btn pg-run" id="pg-run" type="button">
+                Try it Live
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </button>
+              <span class="pg-run-note">Simulated response · no data leaves your browser</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Mobile-only Result / Code switch -->
+        <div class="pg-mtabs" role="tablist" aria-label="Switch panel">
+          <button class="pg-mtab" type="button" role="tab" data-mview="result" aria-selected="true">Result</button>
+          <button class="pg-mtab" type="button" role="tab" data-mview="code" aria-selected="false">Code</button>
+        </div>
+
+        <!-- Code zone -->
+        <section class="pg-zone pg-zone--code" aria-label="Equivalent API call">
+          <div class="pg-code-card">
+            <div class="pg-code-top">
+              <div class="pg-tabs" role="tablist" aria-label="Language">
+                <button class="pg-tab" type="button" role="tab" data-lang="curl" aria-selected="true">cURL</button>
+                <button class="pg-tab" type="button" role="tab" data-lang="javascript" aria-selected="false">JavaScript</button>
+                <button class="pg-tab" type="button" role="tab" data-lang="python" aria-selected="false">Python</button>
+              </div>
+              <button class="pg-copy" id="pg-copy" type="button" aria-label="Copy code">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+                <span class="pg-copy-label">Copy</span>
+              </button>
+            </div>
+            <div class="pg-code-scroll">
+              <pre class="pg-code"><code id="pg-code"></code></pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- Result zone -->
+        <section class="pg-zone pg-zone--result" aria-label="Chain response">
+          <div class="pg-card pg-result-card pg-result" id="pg-result" data-state="idle" aria-live="polite">
+            <div class="pg-result-head">
+              <span class="pg-zone-label">Chain response</span>
+              <span class="pg-state-badge"><span class="pg-bdot"></span><span class="pg-state-text">Awaiting request</span></span>
+            </div>
+
+            <!-- idle -->
+            <div class="pg-rstate pg-rstate--idle">
+              <div class="pg-idle-art">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                <span>Press <strong>Try it Live</strong> to anchor your entry to the chain.</span>
+              </div>
+              <p class="pg-idle-sub">You'll get back a timestamp, the block it landed in, and an on-chain receipt — the same proof a real integration receives.</p>
+            </div>
+
+            <!-- loading -->
+            <div class="pg-rstate pg-rstate--loading">
+              <span class="pg-spinner" aria-hidden="true"></span>
+              <span>Anchoring to the chain…</span>
+            </div>
+
+            <!-- error -->
+            <div class="pg-rstate pg-rstate--error">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+              <div>
+                <div class="pg-err-title">Couldn't reach the chain</div>
+                <div class="pg-err-msg" id="pg-error-msg">Something went wrong. Please try again.</div>
+                <button class="pg-retry" id="pg-retry" type="button">Retry request</button>
+              </div>
+            </div>
+
+            <!-- success -->
+            <div class="pg-rstate pg-rstate--success">
+              <div class="pg-success-grid" id="pg-success-grid"></div>
+              <div class="pg-success-foot" id="pg-success-foot"></div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- ===== SUPPORTING: what just happened ===== -->
+      <section class="pg-explain reveal">
+        <div class="pg-explain-inner">
+          <div>
+            <h2>What just <em>happened?</em></h2>
+            <a class="pg-docs-link" href="#" aria-label="Read the full documentation (coming soon)">
+              Read the full docs
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+            </a>
+          </div>
+          <div class="pg-steps">
+            <div class="pg-step">
+              <div class="pg-step-n">01</div>
+              <div>
+                <h4>Your entry was hashed and submitted</h4>
+                <p>The text you typed is sent to the logging endpoint as a small JSON payload and fingerprinted into a content hash.</p>
+              </div>
+            </div>
+            <div class="pg-step">
+              <div class="pg-step-n">02</div>
+              <div>
+                <h4>It was anchored in the current block</h4>
+                <p>Clockchain signs a new block every second. Your entry lands in the block for that exact moment, fixing it in time.</p>
+              </div>
+            </div>
+            <div class="pg-step">
+              <div class="pg-step-n">03</div>
+              <div>
+                <h4>You got back a verifiable timestamp</h4>
+                <p>The response includes the UTC timestamp, block height, and an on-chain receipt — anyone can independently verify it later.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container-wide">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="index.html" aria-label="Clockchain — home" style="display:inline-block;"><img src="assets/clockchain-logo-full.png" alt="Clockchain" /></a>
+          <p class="footer-addr">D4D Sàrl<br/>Rue des Beaux-Arts 8<br/>2000 Neuchâtel · Switzerland<br/><br/>info@d4d.group</p>
+        </div>
+        <div class="footer-col"><h5>Protocol</h5><ul><li><a href="index.html#solution">Solution</a></li><li><a href="index.html#services">Services</a></li><li><a href="index.html#what">What is Clockchain</a></li></ul></div>
+        <div class="footer-col"><h5>Resources</h5><ul><li><a href="index.html#news">News</a></li><li><a href="index.html#blog">Blog</a></li><li><a href="#">Documentation</a></li><li><a href="#">Whitepaper</a></li><li><a href="#">Patent · US 12,022,015</a></li></ul></div>
+        <div class="footer-col"><h5>Network</h5><ul><li><a href="https://services.clockchain.network/" target="_blank" rel="noopener">Testnet</a></li><li><a href="playground.html">Playground</a></li><li><a href="#">Status</a></li><li><a href="mailto:info@d4d.group">Contact</a></li></ul></div>
+      </div>
+      <div class="footer-bottom">
+        <span class="footer-copy">© 2026 D4D Clockchain · All rights reserved</span>
+        <a href="index.html" class="btt-top" aria-label="Back to the main site">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          <span>Back to site</span>
+        </a>
+        <nav class="footer-socials" aria-label="Clockchain social media and contact">
+          <a href="https://t.me/ClockchainTime" target="_blank" rel="noopener" aria-label="Clockchain on Telegram"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.04 15.4 8.9 19.2c.4 0 .57-.17.77-.37l1.86-1.78 3.86 2.83c.71.39 1.21.18 1.4-.65l2.53-11.85c.23-1.04-.38-1.45-1.06-1.2L3.5 10.18c-1 .39-.99.94-.18 1.19l3.66 1.14 8.5-5.36c.4-.25.77-.11.47.14"/></svg></a>
+        <a href="https://discord.com/invite/daHCN5qMtN" target="_blank" rel="noopener" aria-label="Clockchain on Discord"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.363 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg></a>
+          <a href="https://x.com/clockchain_time" target="_blank" rel="noopener" aria-label="Clockchain on X (formerly Twitter)"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.66l-5.214-6.817-5.967 6.817H1.677l7.73-8.835L1.254 2.25h6.829l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          <a href="mailto:info@d4d.group" aria-label="Email Clockchain at info@d4d.group"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2zm2 .5v.4l8 5.6 8-5.6V5.5L12 11Z"/></svg></a>
+        </nav>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js?v=3"></script>
+  <script src="playground.js?v=1"></script>
+</body>
+</html>

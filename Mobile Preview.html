@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clockchain — Mobile Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{
+      --bg:#0e1110;
+      --panel:#171b1a;
+      --fg:#f3f5f4;
+      --fg-2:rgba(255,255,255,0.56);
+      --fg-3:rgba(255,255,255,0.36);
+      --line:rgba(255,255,255,0.10);
+      --accent:#00cc00;
+      --mono:'JetBrains Mono', ui-monospace, monospace;
+      --disp:'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+    }
+    html,body{height:100%;}
+    body{
+      background:
+        radial-gradient(120% 90% at 50% -10%, #1a201e 0%, var(--bg) 60%) fixed;
+      color:var(--fg);
+      font-family:var(--disp);
+      -webkit-font-smoothing:antialiased;
+      min-height:100vh;
+      display:flex;flex-direction:column;
+    }
+    header.bar{
+      display:flex;align-items:center;justify-content:space-between;gap:20px;
+      padding:22px 30px;border-bottom:1px solid var(--line);
+      flex-shrink:0;
+    }
+    .bar-l{display:flex;align-items:center;gap:14px;}
+    .bar-dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 14px var(--accent);}
+    .bar h1{font-size:16px;font-weight:600;letter-spacing:-0.01em;}
+    .bar .sub{font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--fg-3);}
+    .bar-r{display:flex;align-items:center;gap:10px;}
+    .chip{
+      font-family:var(--mono);font-size:10.5px;letter-spacing:0.1em;text-transform:uppercase;
+      color:var(--fg-2);border:1px solid var(--line);border-radius:999px;padding:7px 13px;
+      background:rgba(255,255,255,0.02);
+    }
+    .chip.accent{color:var(--accent);border-color:color-mix(in oklab,var(--accent),transparent 60%);}
+    .seg{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:rgba(255,255,255,0.02);}
+    .seg-btn{font-family:var(--mono);font-size:10.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--fg-2);background:transparent;border:none;padding:8px 17px;cursor:pointer;transition:color .15s,background .15s;}
+    .seg-btn.active{background:var(--accent);color:#06210a;font-weight:600;}
+    .seg-btn:not(.active):hover{color:var(--fg);}
+    .stage{
+      flex:1;display:flex;align-items:center;justify-content:center;
+      padding:36px 24px;position:relative;overflow:hidden;
+    }
+    .device-wrap{transform-origin:center center;transition:transform .2s ease;}
+    .caption{
+      position:absolute;left:50%;bottom:18px;transform:translateX(-50%);
+      font-family:var(--mono);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;
+      color:var(--fg-3);text-align:center;white-space:nowrap;
+    }
+    .caption b{color:rgba(255,255,255,0.7);font-weight:600;}
+    #root-react{display:contents;}
+    .pf-iframe{width:100%;height:100%;border:0;display:block;background:#070b0a;}
+  </style>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+  <header class="bar">
+    <div class="bar-l">
+      <span class="bar-dot"></span>
+      <div>
+        <h1>Clockchain — Mobile</h1>
+        <div class="sub">Live preview · iPhone</div>
+      </div>
+    </div>
+    <div class="bar-r">
+      <div class="seg">
+        <button class="seg-btn active" data-page="index.html">Home</button>
+        <button class="seg-btn" data-page="blog/brief-history-of-time.html">Blog</button>
+      </div>
+      <span class="chip accent">Interactive</span>
+    </div>
+  </header>
+
+  <div class="stage">
+    <div class="device-wrap" id="device-wrap">
+      <div id="root-react"></div>
+    </div>
+    <div class="caption">Scroll and tap inside the phone. Switch between <b>Home</b> and <b>Blog</b> above.</div>
+  </div>
+
+  <script type="text/babel" src="ios-frame.jsx"></script>
+  <script type="text/babel">
+    const { useEffect } = React;
+
+    function MobilePreview(){
+      return (
+        <IOSDevice dark width={402} height={874}>
+          <div style={{height:'100%', background:'#070b0a', paddingTop:46, boxSizing:'border-box'}}>
+            <iframe className="pf-iframe" src="index.html" title="Clockchain mobile site" loading="eager"></iframe>
+          </div>
+        </IOSDevice>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root-react')).render(<MobilePreview/>);
+
+    /* scale the device to fit the available stage */
+    function fit(){
+      const wrap = document.getElementById('device-wrap');
+      const stage = document.querySelector('.stage');
+      if(!wrap || !stage) return;
+      const availH = stage.clientHeight - 56;
+      const availW = stage.clientWidth - 24;
+      const s = Math.min(1, availH/874, availW/402);
+      wrap.style.transform = 'scale(' + s.toFixed(3) + ')';
+    }
+    window.addEventListener('resize', fit);
+    setTimeout(fit, 60);
+    setTimeout(fit, 400);
+
+    /* Home / Blog toggle */
+    setTimeout(function(){
+      document.querySelectorAll('.seg-btn').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var f = document.querySelector('.pf-iframe');
+          if(!f) return;
+          f.src = btn.getAttribute('data-page');
+          document.querySelectorAll('.seg-btn').forEach(function(b){ b.classList.remove('active'); });
+          btn.classList.add('active');
+        });
+      });
+    }, 120);
+  </script>
+
+  <template id="__bundler_thumbnail">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" fill="#0e1110"/>
+      <rect x="38" y="22" width="24" height="56" rx="6" fill="none" stroke="#00cc00" stroke-width="2.5"/>
+      <circle cx="50" cy="50" r="7" fill="#00cc00"/>
+    </svg>
+  </template>
+</body>
+</html>

@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A History of Time — Clockchain</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="../assets/favicon-512.png" />
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+
+  <!-- Base site styles for tokens (colors, type) + nav/footer -->
+  <link rel="stylesheet" href="../blog-base.css" />
+
+  <!-- Article-specific styles -->
+  <style>
+    /* ========== Article scaffold ========== */
+    .article-page {
+      background: var(--bg);
+      color: var(--fg);
+      min-height: 100vh;
+    }
+
+    .article-back {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(16px) saturate(140%);
+      -webkit-backdrop-filter: blur(16px) saturate(140%);
+      background: color-mix(in oklab, var(--bg), transparent 30%);
+      border-bottom: 1px solid var(--line);
+    }
+    .article-back-inner {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .article-back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--fg-2);
+      text-decoration: none;
+      font-family: var(--f-mono);
+      font-size: 12.5px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: color 200ms ease;
+    }
+    .article-back-link:hover { color: var(--fg); }
+    .article-back-link svg { width: 16px; height: 16px; }
+    .article-back-logo img { height: 32px; width: auto; display: block; }
+
+    /* ========== Header ========== */
+    .article-header {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 88px 32px 48px;
+    }
+    .article-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--f-mono);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--acc);
+      margin-bottom: 32px;
+    }
+    .article-eyebrow .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--acc);
+      box-shadow: 0 0 12px var(--acc);
+    }
+    .article-eyebrow .sep { color: var(--fg-3); }
+    .article-title {
+      font-family: var(--f-display);
+      font-size: clamp(40px, 6.2vw, 78px);
+      line-height: 1.02;
+      letter-spacing: -0.025em;
+      font-weight: 700;
+      margin: 0 0 28px;
+      text-wrap: balance;
+      color: var(--fg);
+    }
+    .article-title em {
+      font-family: var(--f-display);
+      font-style: normal;
+      font-weight: 500;
+      color: var(--acc);
+      letter-spacing: -0.01em;
+    }
+    .article-dek {
+      font-size: 22px;
+      line-height: 1.45;
+      color: var(--fg-2);
+      max-width: 680px;
+      margin: 0 0 40px;
+      text-wrap: pretty;
+    }
+    .article-meta {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      font-family: var(--f-mono);
+      font-size: 12.5px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--fg-3);
+      padding-top: 28px;
+      border-top: 1px solid var(--line);
+    }
+    .article-meta .author { color: var(--fg-2); }
+    .article-meta .sep { color: var(--fg-3); opacity: 0.5; }
+
+    /* ========== Hero image ========== */
+    .hero-figure {
+      max-width: 1400px;
+      margin: 0 auto 96px;
+      padding: 0 32px;
+    }
+    .hero-figure-frame {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      overflow: hidden;
+      background: #000;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .hero-figure-frame img {
+      width: 100%;
+      height: auto;
+      display: block;
+      filter: contrast(1.05) brightness(0.96);
+    }
+    .hero-figure-frame::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      box-shadow: inset 0 0 120px rgba(0,0,0,0.35);
+      pointer-events: none;
+    }
+    .hero-caption {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 24px;
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+    }
+    .hero-caption .cap-no {
+      font-family: var(--f-mono);
+      font-size: 11.5px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--acc);
+      padding-top: 2px;
+    }
+    .hero-caption .cap-text {
+      font-size: 14.5px;
+      line-height: 1.55;
+      color: var(--fg-2);
+      max-width: 720px;
+    }
+    .hero-caption .cap-text strong { color: var(--fg); font-weight: 600; }
+
+    /* ========== Intro — (unused; kept in case of future restoration) ========== */
+    .article-intro {
+      max-width: 760px;
+      margin: 0 auto 120px;
+      padding: 0 32px;
+    }
+    .article-intro p {
+      font-family: var(--f-display);
+      font-size: 26px;
+      line-height: 1.45;
+      letter-spacing: -0.005em;
+      color: var(--fg);
+      margin: 0 0 24px;
+      text-wrap: pretty;
+    }
+    .article-intro p.lead-cap::first-letter {
+      font-family: var(--f-display);
+      font-size: 5.2em;
+      float: left;
+      line-height: 0.86;
+      padding: 8px 14px 0 0;
+      color: var(--acc);
+      font-style: normal;
+      font-weight: 500;
+    }
+
+    /* Inline intro figure — small, floats right so text wraps around */
+    .intro-figure {
+      float: right;
+      width: 240px;
+      margin: 6px 0 18px 28px;
+      shape-outside: margin-box;
+    }
+    .intro-figure img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      filter: contrast(1.05) saturate(0.92);
+      box-shadow: 0 12px 36px -16px color-mix(in oklab, var(--acc), transparent 60%);
+    }
+    .intro-figure figcaption {
+      margin-top: 8px;
+      font-family: var(--f-mono);
+      font-size: 10.5px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--fg-3);
+      text-align: right;
+    }
+
+    /* ========== Timeline ========== */
+    .timeline-wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 32px 120px;
+    }
+
+    /* Era heading — left-rail label, no editorial title */
+    .era {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 48px;
+      align-items: baseline;
+      padding: 56px 0 18px;
+      border-top: 1px solid var(--line);
+      position: relative;
+    }
+    .era:first-child { border-top: 0; padding-top: 24px; }
+    .era-label {
+      font-family: var(--f-mono);
+      font-size: 12px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--fg-2);
+      position: sticky;
+      top: 88px;
+    }
+    .era-label .era-num {
+      display: block;
+      color: var(--acc);
+      font-size: 11px;
+      margin-bottom: 6px;
+      opacity: 0.7;
+    }
+
+    /* Entries — vertical rail */
+    .entries {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 48px;
+      margin-bottom: 16px;
+    }
+    .entry {
+      grid-column: 2;
+      display: block;
+      padding: 32px 0 40px;
+      position: relative;
+    }
+    .entry + .entry { border-top: 1px dashed var(--line); }
+
+    .entry-year {
+      font-family: var(--f-display);
+      font-size: 28px;
+      line-height: 1.1;
+      letter-spacing: -0.012em;
+      font-weight: 600;
+      color: var(--fg);
+      margin: 0 0 18px;
+      display: inline-flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .entry-year::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--acc);
+      box-shadow: 0 0 0 5px color-mix(in oklab, var(--acc), transparent 80%);
+      flex-shrink: 0;
+    }
+    .entry-body {
+      font-size: 18px;
+      line-height: 1.62;
+      color: var(--fg);
+      max-width: 720px;
+      margin: 0;
+      text-wrap: pretty;
+    }
+    .entry-body em { font-style: italic; color: var(--fg); }
+
+    /* Inline image — full entry width */
+    .entry-img-wide {
+      margin: 24px 0 0;
+      max-width: 760px;
+    }
+    .entry-img-wide img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: #000;
+    }
+    .entry-img-wide figcaption {
+      margin-top: 10px;
+      font-family: var(--f-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--fg-3);
+    }
+
+    /* Paired images (2-up) */
+    .entry-img-pair {
+      margin: 24px 0 0;
+      max-width: 760px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .entry-img-pair .pair-cell {
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      overflow: hidden;
+      background: #000;
+      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .entry-img-pair .pair-cell img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .entry-img-pair figcaption {
+      grid-column: 1 / -1;
+      margin-top: 4px;
+      font-family: var(--f-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--fg-3);
+    }
+
+    /* Featured entry — image on left, text on right */
+    .entry.featured { padding: 36px 0 44px; }
+    .entry.featured .featured-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 36px;
+      align-items: start;
+    }
+    .entry.featured.featured-grow .featured-grid {
+      grid-template-columns: 2.77fr 1fr;
+    }
+    .entry.featured.featured-grow { grid-column: 1 / -1; }
+    .entry.featured .featured-img {
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      overflow: hidden;
+      background: #000;
+    }
+    .entry.featured .featured-img img {
+      width: 100%;
+      height: auto;
+      display: block;
+      filter: contrast(1.04);
+    }
+    .entry.featured .featured-img-cap {
+      font-family: var(--f-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--fg-3);
+      margin-top: 10px;
+    }
+
+    /* Climax — 2026 entry */
+    .entry.climax {
+      margin-top: 32px;
+      padding: 44px;
+      border: 1px solid color-mix(in oklab, var(--acc), transparent 60%);
+      border-radius: 16px;
+      background:
+        radial-gradient(120% 100% at 0% 0%, color-mix(in oklab, var(--acc), transparent 92%), transparent 60%),
+        color-mix(in oklab, var(--bg-elev), transparent 0%);
+      position: relative;
+      overflow: hidden;
+    }
+    .entry.climax + .entry { border-top: 0; }
+    .entry.climax::before {
+      content: "";
+      position: absolute;
+      top: -1px; left: -1px; right: -1px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--acc), transparent);
+      opacity: 0.6;
+    }
+    .entry.climax .climax-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 36px;
+      align-items: center;
+    }
+    .entry.climax .entry-year {
+      color: var(--acc);
+      font-size: 32px;
+    }
+    .entry.climax .entry-year::before {
+      width: 12px; height: 12px;
+      box-shadow: 0 0 0 6px color-mix(in oklab, var(--acc), transparent 70%),
+                  0 0 24px color-mix(in oklab, var(--acc), transparent 50%);
+    }
+    .entry.climax .entry-body {
+      font-size: 19px;
+      color: var(--fg);
+    }
+    .entry.climax .climax-img {
+      margin: 0;
+      border: 1px solid color-mix(in oklab, var(--acc), transparent 70%);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #000;
+      box-shadow: 0 12px 48px -16px color-mix(in oklab, var(--acc), transparent 60%);
+    }
+    .entry.climax .climax-img img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .entry.climax .climax-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 24px;
+      padding: 12px 22px;
+      border: 1px solid var(--acc);
+      border-radius: 999px;
+      background: color-mix(in oklab, var(--acc), transparent 90%);
+      color: var(--fg);
+      text-decoration: none;
+      font-family: var(--f-mono);
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: background 220ms ease, transform 220ms ease;
+    }
+    .entry.climax .climax-cta:hover {
+      background: color-mix(in oklab, var(--acc), transparent 75%);
+      transform: translateX(4px);
+    }
+    .entry.climax .climax-cta svg { width: 16px; height: 16px; }
+
+    /* ========== Closing ========== */
+    .article-foot {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 80px 32px 120px;
+      border-top: 1px solid var(--line);
+    }
+    .article-foot-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+    .article-foot-block h5 {
+      font-family: var(--f-mono);
+      font-size: 11.5px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--fg-3);
+      margin: 32px 0 14px;
+      font-weight: 500;
+    }
+    .article-foot-block p, .article-foot-block a {
+      font-size: 15.5px;
+      line-height: 1.55;
+      color: var(--fg-2);
+    }
+    .article-foot-block a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--fg);
+      border-bottom: 1px solid color-mix(in oklab, var(--fg), transparent 70%);
+      padding-bottom: 1px;
+      transition: color 200ms ease, border-color 200ms ease;
+    }
+    .article-foot-block a:hover {
+      color: var(--acc);
+      border-color: var(--acc);
+    }
+
+    /* ========== Responsive ========== */
+    @media (max-width: 900px) {
+      .article-header { padding: 56px 22px 32px; }
+      .article-title { font-size: clamp(34px, 8vw, 52px); }
+      .article-dek { font-size: 18px; }
+      .hero-figure { padding: 0 22px; margin-bottom: 64px; }
+      .timeline-wrap { padding: 0 22px 80px; }
+      .era { grid-template-columns: 1fr; gap: 8px; padding: 40px 0 12px; }
+      .era-label { position: static; }
+      .entries { grid-template-columns: 1fr; gap: 0; margin-bottom: 8px; }
+      .entry { grid-column: 1; padding: 24px 0 32px; }
+      .entry-year { font-size: 22px; gap: 12px; }
+      .entry-body { font-size: 16.5px; }
+      .entry-img-wide, .entry-img-pair { max-width: 100%; }
+      .entry.featured .featured-grid { grid-template-columns: 1fr; gap: 20px; }
+      .entry.featured.featured-grow .featured-grid { grid-template-columns: 1fr; gap: 20px; }
+      .entry.climax { padding: 28px 22px; }
+      .entry.climax .climax-grid { grid-template-columns: 1fr; gap: 24px; }
+      .entry.climax .entry-year { font-size: 26px; }
+      .entry.climax .entry-body { font-size: 17px; }
+      .article-foot { padding: 56px 22px 80px; }
+      .article-foot-grid { grid-template-columns: 1fr; gap: 24px; }
+      .article-back-inner { padding: 14px 22px; }
+    }
+
+    @media (max-width: 600px) {
+      .article-back-inner { padding: 12px 18px; }
+      .article-back-link { font-size: 11.5px; }
+      .article-back-logo img { height: 28px; }
+      .article-header { padding: 44px 18px 28px; }
+      .article-eyebrow { margin-bottom: 22px; font-size: 11px; flex-wrap: wrap; }
+      .article-title { font-size: clamp(30px, 8.5vw, 40px); margin-bottom: 20px; }
+      .article-dek { font-size: 17px; margin-bottom: 26px; }
+      .article-meta { gap: 8px 12px; padding-top: 20px; font-size: 11.5px; }
+      .hero-figure { padding: 0 18px; margin-bottom: 48px; }
+      .hero-caption { grid-template-columns: 1fr; gap: 8px; }
+      .timeline-wrap { padding: 0 18px 64px; }
+      .era { padding: 32px 0 10px; }
+      .entry { padding: 22px 0 28px; }
+      /* let long year labels wrap instead of pushing the page sideways */
+      .entry-year { display: flex; flex-wrap: wrap; align-items: center; font-size: 21px; gap: 12px; }
+      .entry-body { font-size: 16px; }
+      .entry-img-pair { gap: 10px; }
+      .entry.climax { padding: 24px 18px; border-radius: 14px; }
+      .entry.climax .entry-year { font-size: 24px; }
+      .entry.climax .climax-cta { display: flex; width: 100%; justify-content: center; }
+      .article-foot { padding: 48px 18px 72px; }
+    }
+
+    @media (max-width: 400px) {
+      .entry-img-pair { grid-template-columns: 1fr; }
+      .entry-img-pair .pair-cell { aspect-ratio: 16 / 10; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
+    }
+  </style>
+</head>
+<body class="article-page">
+
+  <!-- Sticky back nav -->
+  <div class="article-back">
+    <div class="article-back-inner">
+      <a class="article-back-link" href="../index.html#blog">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to blog
+      </a>
+      <a class="article-back-logo" href="../index.html" aria-label="Clockchain home">
+        <img src="../assets/clockchain-logo-full.png" alt="Clockchain" />
+      </a>
+    </div>
+  </div>
+
+  <!-- ===== Article Header ===== -->
+  <header class="article-header">
+    <div class="article-eyebrow">
+      <span class="dot"></span>
+      <span>HISTORY</span>
+      <span class="sep">·</span>
+      <span>FROM THE TEAM</span>
+    </div>
+    <h1 class="article-title">A history of <em>time</em> and timekeeping.</h1>
+    <p class="article-dek">
+      From 13.8 billion years before present to Q4 2026.
+    </p>
+    <div class="article-meta">
+      <span class="author">Clockchain Team</span>
+      <span class="sep">·</span>
+      <span>May 25, 2026</span>
+      <span class="sep">·</span>
+      <span>6 min read</span>
+    </div>
+  </header>
+
+  <!-- ===== Hero image ===== -->
+  <figure class="hero-figure">
+    <div class="hero-figure-frame">
+      <img src="../assets/blog/atomic-clock-1949.jpg" alt="The world's first atomic clock, built at the US National Bureau of Standards in 1949. Left: Harold Lyons calibrates the ammonia-line apparatus. Right: a public-facing clock dial mounted atop the apparatus." />
+    </div>
+    <figcaption class="hero-caption">
+      <span class="cap-no">FIG. 01 · 1949</span>
+      <span class="cap-text">
+        <strong>The first atomic clock.</strong> Built at the US National Bureau of Standards — the moment timekeeping shifted from astronomy-based to physics-based. <em>Public domain · NBS / NIST archives.</em>
+      </span>
+    </figcaption>
+  </figure>
+
+  <!-- ===== Timeline ===== -->
+  <main class="timeline-wrap">
+
+    <!-- Era 01 — Cosmic Origins -->
+    <div class="era">
+      <div class="era-label">
+        <span class="era-num">01 / 07</span>
+        Cosmic Origins
+      </div>
+    </div>
+    <div class="entries">
+      <article class="entry featured featured-grow">
+        <div class="featured-grid">
+          <figure class="featured-img-wrap">
+            <div class="featured-img">
+              <img src="../assets/blog/cosmic-bigbang.png" alt="Artistic rendering of the Big Bang — a singularity expanding into spacetime." />
+            </div>
+            <div class="featured-img-cap">The origin of spacetime</div>
+          </figure>
+          <div>
+            <div class="entry-year">13.8 billion years before present</div>
+            <p class="entry-body">
+              A singularity exploded or imploded or expanded — we don’t really know, in
+              an event known as the Big Bang. This was the origin of spacetime, from
+              which both space and time descend.
+            </p>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Era 02 — Ancient Civilizations -->
+    <div class="era">
+      <div class="era-label">
+        <span class="era-num">02 / 07</span>
+        Ancient Civilizations
+      </div>
+    </div>
+    <div class="entries">
+      <article class="entry">
+        <div class="entry-year">3500 BCE</div>
+        <p class="entry-body">
+          The earliest sundials appear in ancient Egypt. These established the idea of
+          dividing daylight into regular intervals.
+        </p>
+        <figure class="entry-img-pair">
+          <div class="pair-cell"><img src="../assets/blog/sundial-a.png" alt="Ancient Egyptian sundial — a fan of radial lines etched into limestone." /></div>
+          <div class="pair-cell"><img src="../assets/blog/sundial-b.png" alt="Ancient Egyptian sundial with central gnomon, casting a shadow across radial hour markers." /></div>
+          <figcaption>Egyptian sundials · limestone</figcaption>
+        </figure>
+      </article>
+
+      <article class="entry">
+        <div class="entry-year">2000 BCE</div>
+        <p class="entry-body">
+          The ancient Babylonians introduced the base 60 numbering system still in use
+          today. This is why 1 minute has 60 seconds, 1 hour has 60 minutes, and a
+          circle has 360 degrees.
+        </p>
+        <figure class="entry-img-wide">
+          <img src="../assets/blog/babylonian-base60.png" alt="Babylonian cuneiform tablets showing numerical and geometric notation." />
+          <figcaption>Babylonian cuneiform tablets · numerical &amp; geometric notation</figcaption>
+        </figure>
+      </article>
+
+      <article class="entry">
+        <div class="entry-year">45 BCE</div>
+        <p class="entry-body">
+          Julius Caesar standardized the solar year across the Roman world. The Julian
+          calendar became the dominant calendar for the next 1600 years.
+        </p>
+      </article>
+    </div>
+
+    <!-- Era 03 — Medieval & Mechanical -->
+    <div class="era">
+      <div class="era-label">
+        <span class="era-num">03 / 07</span>
+        Medieval &amp; Mechanical
+      </div>
+    </div>
+    <div class="entries">
+      <article class="entry">
+        <div class="entry-year">725 CE — 1092 CE</div>
+        <p class="entry-body">
+          Tang Dynasty Buddhist monk and engineer Yi Xing pioneered the first regulated
+          mechanical timing systems. His work led to the world’s first mechanical clock
+          built by Su Song in 1092. Water powered and chain driven, Su Song’s clock
+          tower was one of the most advanced premodern clocks ever constructed.
+        </p>
+        <figure class="entry-img-wide">
+          <img src="../assets/blog/yi-xing-su-song.png" alt="Illustration of Su Song’s 11th-century water-powered astronomical clock tower." />
+          <figcaption>Su Song’s astronomical clock tower · 1092</figcaption>
+        </figure>
+      </article>
+
+      <article class="entry">
+        <div class="entry-year">~ 1300</div>
+        <p class="entry-body">
+          The first clock towers appeared and proliferated in Europe, ushering in the
+          age of public synchronized urban time. This had profound implications for
+          labor, commerce, and eventually industrial civilization.
+        </p>
+      </article>
+
+      <article class="entry">
+        <div class="entry-year">1656</div>
+        <p class="entry-body">
+          Christiaan Huygens developed the first pendulum-based clock, which
+          dramatically improved accuracy from 15 minutes/day error to about 15
+          seconds/day.
+        </p>
+        <figure class="entry-img-wide">
+          <img src="../assets/blog/huygens-pendulum.png" alt="Engraving of Christiaan Huygens’s pendulum clock mechanism, 17th century." />
+          <figcaption>Huygens’s pendulum clock · engraving, 17th century</figcaption>
+        </figure>
+      </article>
+    </div>
+
+    <!-- Era 04 — Industrial Standardization -->
+    <div class="era">
+      <div class="era-label">
+        <span class="era-num">04 / 07</span>
+        Industrial Standardization
+      </div>
+    </div>
+    <div class="entries">
+      <article class="entry">
+        <div class="entry-year">1884</div>
+        <p class="entry-body">
+          The International Meridian Conference established Greenwich as the prime
+          meridian, standardized international timekeeping, and formed the basis for
+          global time zones.
+        </p>
+        <figure class="entry-img-wide">
+          <img src="../assets/blog/greenwich-meridian.png" alt="Delegates of the 1884 International Meridian Conference photographed on the steps of the US Capitol." />
+          <figcaption>Delegates of the International Meridian Conference · 1884</figcaption>
+        </figure>
+      </article>
+
+      <article class="entry">
+        <div class="entry-year">1927</div>
+        <p class="entry-body">
+          The first quartz clock was introduced, offering a far more stable time
+          reference than mechanical clocks.
+        </p>
+      </article>
+    </div>
+
+    <!-- Era 05 — Atomic Era -->
+    <div class="era">
+      <div class="era-label">
+        <span class="era-num">05 / 07</span>
+        Atomic Era
+      </div>
+    </div>
+    <div class="entries">
+      <article class="entry featured">
+        <div class="featured-grid">
+          <figure class="featured-img-wrap">
+            <div class="featured-img">
+              <img src="../assets/blog/atomic-clock-1949.jpg" alt="The first atomic clock at the US National Bureau of Standards, 1949." />
+            </div>
+            <div class="featured-img-cap">NBS · Washington, DC</div>
+          </figure>
+          <div>
+            <div class="entry-year">1949</div>
+            <p class="entry-body">
+              The first atomic clock was built at the US National Bureau of Standards.
+              This changed timekeeping from astronomy-based to physics-based.
+            </p>
+          </div>
+        </div>
+      </article>
+
+      <article class="entry">
+        <div class="entry-year">1967</div>
+        <p class="entry-body">
+          The second becomes officially defined by Cesium 133 transitions.
+          Specifically, 9,192,631,770 oscillations of cesium radiation. Modern
+          civilization depends on this definition.
+        </p>
+      </article>
+
+      <article class="entry">
+        <div class="entry-year">1972</div>
+        <p class="entry-body">
+          Coordinated Universal Time (UTC) adopted. UTC combines atomic precision with
+          Earth rotational corrections via leap seconds. This is the core global time
+          standard in use today.
+        </p>
+        <figure class="entry-img-wide">
+          <img src="../assets/blog/utc.png" alt="World map showing UTC time zones across Europe and the North Atlantic." />
+          <figcaption>UTC time zones · the global time standard in use today</figcaption>
+        </figure>
+      </article>
+    </div>
+
+    <!-- Era 06 — Network Era -->
+    <div class="era">
+      <div class="era-label">
+        <span class="era-num">06 / 07</span>
+        Network Era
+      </div>
+    </div>
+    <div class="entries">
+      <article class="entry">
+        <div class="entry-year">1989</div>
+        <p class="entry-body">
+          Network Time Protocol (NTP) introduced. NTP becomes foundational internet
+          infrastructure. Nearly every computer network on Earth uses it.
+        </p>
+      </article>
+
+      <article class="entry">
+        <div class="entry-year">2009</div>
+        <p class="entry-body">
+          Bitcoin blockchain launches. Blockchains introduce decentralized timestamp
+          ordering, which encompass consensus-based chronology, immutable sequencing,
+          and cryptographic proof of temporal ordering.
+        </p>
+      </article>
+    </div>
+
+    <!-- Era 07 — Blockchain-Native (climax) -->
+    <div class="era">
+      <div class="era-label">
+        <span class="era-num">07 / 07</span>
+        Blockchain-Native
+      </div>
+    </div>
+    <div class="entries">
+      <article class="entry climax">
+        <div class="climax-grid">
+          <div>
+            <div class="entry-year">2026</div>
+            <p class="entry-body">
+              Clockchain introduces its blockchain-native global time standard. This
+              standard introduces decentralized trustless time, combining blockchain
+              security with atomic clock accuracy.
+            </p>
+            <a class="climax-cta" href="../index.html#solution">
+              Read about the solution
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+            </a>
+          </div>
+          <figure class="climax-img">
+            <img src="../assets/blog/clockchain-illustration.png" alt="Clockchain display: Clock Height, Clockchain Time, and System Time overlaid on Earth from space." />
+          </figure>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <!-- ===== Foot ===== -->
+  <footer class="article-foot">
+    <div class="article-foot-grid">
+      <div class="article-foot-block">
+        <h5>About the author</h5>
+        <p>Written by the Clockchain team — building the new global standard for verifiable time.</p>
+      </div>
+      <div class="article-foot-block">
+        <h5>Keep reading</h5>
+        <a href="../index.html#solution">
+          What is Clockchain?
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+        <br/><br/>
+        <a href="../index.html#news">
+          Latest press releases
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
