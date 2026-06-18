@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@100;200;300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=38" />
+  <link rel="stylesheet" href="styles.css?v=39" />
   <script>
     (function(){
       var root=document.documentElement;
@@ -61,7 +61,7 @@
     <ul class="nav-links">
       <li><a href="#problem">About</a></li>
       <li><a href="#services">Services</a></li>
-      <li><a href="#news">Media</a></li>
+      <li><a href="newsroom.html">Media</a></li>
       <li><a href="https://services.clockchain.network/" target="_blank" rel="noopener">Testnet</a></li>
     </ul>
     <div class="nav-right">
@@ -103,7 +103,7 @@
     <nav class="mm-links" aria-label="Primary (mobile)">
       <a href="#problem">About</a>
       <a href="#services">Services</a>
-      <a href="#news">Media</a>
+      <a href="newsroom.html">Media</a>
       <a href="/community">Community</a>
       <a href="https://services.clockchain.network/" target="_blank" rel="noopener">Testnet</a>
     </nav>
@@ -302,139 +302,35 @@
       </div>
     </section>
 
-    <!-- ===== BLOG ===== -->
-    <section class="blog reveal split" id="blog" data-screen-label="06 Blog">
+    <!-- ===== NEWSROOM TEASER ===== -->
+    <section class="newsroom-teaser reveal" id="news" data-screen-label="06 Newsroom">
       <div class="container">
         <div class="section-head-c">
-          <span class="tag">New Post</span>
-          <h2 class="h2">Clockchain <em>Blog.</em></h2>
+          <span class="tag">Newsroom</span>
+          <h2 class="h2">News, press &amp; <em>media.</em></h2>
         </div>
-        <div class="blog-list">
-        <a class="blog-card" href="blog/brief-history-of-time.html">
-          <div class="blog-img"><img src="assets/blog/big-bang-lead.png" alt="Artistic rendering of the Big Bang — a singularity expanding into spacetime" /></div>
-          <div class="blog-body">
-            <div class="blog-meta"><span class="accent">Clockchain</span><span>·</span><span>May 25, 2026</span></div>
+        <div class="nt-grid">
+          <a class="nt-card" href="blog/brief-history-of-time.html">
+            <div class="nt-top"><span class="nt-kicker">Blog</span><span class="nt-date">May 25, 2026</span></div>
             <h3>A history of time.</h3>
-            <p>From a singularity 13.8 billion years ago to a blockchain-native global time standard in 2026 — fifteen moments that shaped how we measure when.</p>
-            <span class="read-link">Read post<svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
-          </div>
-        </a>
-        <a class="blog-card" href="https://www.forward-layer.com/blog/cross-knowledge-graph-temporal-truth" target="_blank" rel="noopener">
-          <div class="blog-img"><img src="assets/blog/goetz-weber-lead.png" alt="Data center server racks with illuminated network cabling" /></div>
-          <div class="blog-body">
-            <div class="blog-meta"><span class="accent">Goetz Weber</span><span>·</span><span>Feb 3, 2026</span></div>
-            <h3>Cross-Knowledge Graph Assertion of Temporal Truth.</h3>
-            <p>A guest post from Forward Layer's Goetz Weber on asserting verifiable temporal truth across knowledge graphs — reposted here with permission.</p>
-            <span class="read-link">Read post<svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
-          </div>
-        </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== NEWS & MEDIA ===== -->
-    <section class="news reveal split" id="news" data-screen-label="07 News &amp; Media">
-      <div class="container">
-        <div class="section-head-c">
-          <span class="tag">Latest · Updated 2026.02.24</span>
-          <h2 class="h2">News &amp; <em>Media.</em></h2>
-        </div>
-
-        <div class="news-body">
-        <div class="subhead">
-          <div class="subhead-l"><span class="subhead-num">01</span><h3>News</h3><span class="subhead-pill">Press Releases</span></div>
-          <div class="subhead-rule"></div>
-          <span class="subhead-count">6 releases</span>
-        </div>
-
-        <article class="pr-lead" data-article="pr-testnet-2026">
-          <div class="pr-meta"><span>Press Release</span><span>·</span><span>February 24, 2026</span></div>
-          <span class="pr-tag">Latest release</span>
-          <h4>Clockchain Opens Public Testnet, Introducing a New Blockchain-Based Global Time Standard</h4>
-          <p class="dek">The world's first blockchain-based timestamping and timekeeping system is now open to developers — combining atomic-clock precision with on-chain verifiability.</p>
-        </article>
-
-        <ul class="pr-list">
-          <li class="pr-item" data-article="pr-eth-polygon-2025"><span class="pr-date">June 3, 2025</span><span class="pr-title">Clockchain to Schedule and Execute Smart Contracts on Ethereum and Polygon</span><span class="pr-arrow"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span></li>
-          <li class="pr-item" data-article="pr-time-oracle-2025"><span class="pr-date">January 22, 2025</span><span class="pr-title">Clockchain Network Announces New Time Oracle</span><span class="pr-arrow"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span></li>
-          <li class="pr-item" data-article="pr-sf-tech-week-2024"><span class="pr-date">October 16, 2024</span><span class="pr-title">Clockchain Network Unveils New Timestamping Solutions at SF Tech Week</span><span class="pr-arrow"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span></li>
-          <li class="pr-item" data-article="pr-patent-2024"><span class="pr-date">August 13, 2024</span><span class="pr-title">Clockchain Awarded Patent for World's First Blockchain Clock</span><span class="pr-arrow"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span></li>
-          <li class="pr-item" data-article="pr-european-forum-2024"><span class="pr-date">June 24, 2024</span><span class="pr-title">D4D Clockchain Technology Debuts at European Timekeeping Forum</span><span class="pr-arrow"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span></li>
-        </ul>
-
-        <div class="subhead">
-          <div class="subhead-l"><span class="subhead-num">02</span><h3>Media</h3></div>
-          <div class="subhead-rule"></div>
-          <span class="subhead-count">8 entries</span>
-        </div>
-
-        <div class="media-grid">
-          <article class="media-card lead" data-article="blockzeit-testnet">
-            <div class="media-thumb"><img src="assets/media/blockzeit.png" alt="Blockzeit artwork: clock faces linked by a chain around the Clockchain mark" /></div>
-            <div class="media-body">
-              <span class="media-source">Blockzeit.com</span>
-              <h4>Clockchain Launches Public Testnet — Here's What It Offers</h4>
-              <p class="dek">Blockzeit profiles the public testnet launch and the three foundational services now live for developers.</p>
-              <div class="media-foot"><span class="media-date">Feb 24, 2026</span><span class="media-read">Read article<svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span></div>
-            </div>
-          </article>
-          <article class="media-card" data-article="mexc-testnet">
-            <div class="media-thumb panel-light contain"><img src="assets/media/mexc.png" alt="MEXC logo" /></div>
-            <div class="media-body">
-              <span class="media-source">Mexc.co</span>
-              <h4>Clockchain Unveils Testnet for Verifiable Blockchain Time</h4>
-              <div class="media-foot"><span class="media-date">Feb 24, 2026</span><span class="media-read">Read article<svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span></div>
-            </div>
-          </article>
-          <a class="media-card" href="https://hipther.com/latest-news/2026/02/24/107521/blocks-headlines-today-in-blockchain-february-24-2026-clockchain-silent-data-better-finastra/" target="_blank" rel="noopener">
-            <div class="media-thumb"><img src="assets/media/hipther.png?v=2" alt="Network of glowing isometric blockchain blocks — Hipther blockchain news roundup" /></div>
-            <div class="media-body">
-              <span class="media-source">Hipther.com</span>
-              <h4>Blocks &amp; Headlines: Clockchain Opens Public Testnet for a Global Verifiable Time Standard</h4>
-              <div class="media-foot"><span class="media-date">Feb 24, 2026</span><span class="media-read">Read article<svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span></div>
-            </div>
+            <p>From a singularity 13.8 billion years ago to a blockchain-native global time standard — fifteen moments that shaped how we measure when.</p>
+            <span class="nt-link">Read post<svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
           </a>
-          <article class="media-card" data-article="medium-verifiable-time">
-            <div class="media-thumb panel-light contain"><img src="assets/media/medium.png" alt="Medium logo" /></div>
-            <div class="media-body">
-              <span class="media-source">Medium.com</span>
-              <h4>The Role of Verifiable Time in Smart Contract Execution</h4>
-              <div class="media-foot"><span class="media-date">May 26, 2025</span><span class="media-read">Read article<svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span></div>
-            </div>
-          </article>
-          <article class="media-card" data-article="neuchatel-web3">
-            <div class="media-thumb"><img src="assets/media/neuchatel.png" alt="Two members of the Clockchain team seated by a fountain in Neuchâtel" /></div>
-            <div class="media-body">
-              <span class="media-source">Neuchateleconomie.ch</span>
-              <h4>Clockchain: Revolutionizing time security in the Web 3.0 ecosystem from Neuchâtel</h4>
-              <div class="media-foot"><span class="media-date">Feb 9, 2025</span><span class="media-read">Read article<svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span></div>
-            </div>
-          </article>
-          <article class="media-card" data-article="cointrust-patent">
-            <div class="media-thumb panel-dark contain"><img src="assets/media/cointrust.png" alt="CoinTrust logo" /></div>
-            <div class="media-body">
-              <span class="media-source">Cointrust.com</span>
-              <h4>D4D Sàrl's Innovative Blockchain Clock Secures Key Patent</h4>
-              <div class="media-foot"><span class="media-date">Aug 14, 2024</span><span class="media-read">Read article<svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span></div>
-            </div>
-          </article>
-          <article class="media-card" data-article="companyglance-patent">
-            <div class="media-thumb panel-light contain"><img src="assets/media/companyglance.png" alt="CompanyGlance logo" /></div>
-            <div class="media-body">
-              <span class="media-source">Companyglance.com</span>
-              <h4>D4D Sàrl Gains Patent for Clockchain's Groundbreaking Blockchain Clock</h4>
-              <div class="media-foot"><span class="media-date">Aug 14, 2024</span><span class="media-read">Read article<svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span></div>
-            </div>
-          </article>
-          <article class="media-card" data-article="companyglance-unveils">
-            <div class="media-thumb panel-light contain"><img src="assets/media/companyglance.png" alt="CompanyGlance logo" /></div>
-            <div class="media-body">
-              <span class="media-source">Companyglance.com</span>
-              <h4>D4D Sàrl Unveils Clockchain Technology</h4>
-              <div class="media-foot"><span class="media-date">June 25, 2024</span><span class="media-read">Read article<svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span></div>
-            </div>
-          </article>
+          <a class="nt-card" href="newsroom.html#news">
+            <div class="nt-top"><span class="nt-kicker">Press Release</span><span class="nt-date">Feb 24, 2026</span></div>
+            <h3>Clockchain opens its public testnet.</h3>
+            <p>The world's first blockchain-based time oracle is now open to developers — atomic-clock precision with on-chain verifiability.</p>
+            <span class="nt-link">Read release<svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+          </a>
+          <a class="nt-card" href="newsroom.html#media">
+            <div class="nt-top"><span class="nt-kicker">In the Media</span><span class="nt-date">Feb 24, 2026</span></div>
+            <h3>Clockchain Launches Public Testnet — Here's What It Offers.</h3>
+            <p>Blockzeit profiles the testnet launch and the three foundational services now live for developers.</p>
+            <span class="nt-link">Read coverage<svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+          </a>
         </div>
+        <div class="nt-cta-row">
+          <a class="btn btn-outline" href="newsroom.html">View all news &amp; media<svg viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg></a>
         </div>
       </div>
     </section>
@@ -464,7 +360,7 @@
           <p class="footer-addr">D4D Sàrl<br/>Rue des Beaux-Arts 8<br/>2000 Neuchâtel · Switzerland<br/><br/>info@d4d.group</p>
         </div>
         <div class="footer-col"><h5>Protocol</h5><ul><li><a href="#solution">Solution</a></li><li><a href="#services">Services</a></li></ul></div>
-        <div class="footer-col"><h5>Resources</h5><ul><li><a href="#news">News</a></li><li><a href="#blog">Blog</a></li><li><a href="#">Documentation</a></li><li><a href="#">Whitepaper</a></li><li><a href="#">Patent · US 12,022,015</a></li></ul></div>
+        <div class="footer-col"><h5>Resources</h5><ul><li><a href="newsroom.html#news">News</a></li><li><a href="newsroom.html#blog">Blog</a></li><li><a href="#">Documentation</a></li><li><a href="#">Whitepaper</a></li><li><a href="#">Patent · US 12,022,015</a></li></ul></div>
         <div class="footer-col"><h5>Network</h5><ul><li><a href="https://services.clockchain.network/" target="_blank" rel="noopener">Testnet</a></li><li><a href="#">Status</a></li><li><a href="#">Node operators</a></li><li><a href="mailto:info@d4d.group">Contact</a></li></ul></div>
       </div>
       <div class="footer-bottom">
@@ -503,7 +399,7 @@
   <script src="https://unpkg.com/three@0.128.0/examples/js/lines/LineSegments2.js"></script>
   <script src="https://unpkg.com/three@0.128.0/examples/js/lines/Line2.js"></script>
   <script src="https://unpkg.com/three@0.128.0/examples/js/lines/LineMaterial.js"></script>
-  <script src="globe.js?v=6"></script>
+  <script src="globe.js?v=11"></script>
   <script src="app.js?v=5"></script>
   <script src="hero-orbit.js?v=12"></script>
   <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
