@@ -10,11 +10,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@100;200;300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=39" />
+  <link rel="stylesheet" href="styles.css?v=41" />
   <script>
     (function(){
       var root=document.documentElement;
-      root.setAttribute('data-globefill','20');
+      root.setAttribute('data-globesize','100');
       function setV(v){
         if(v==='hybrid'){root.setAttribute('data-variant','daylight');root.setAttribute('data-hybrid','1');}
         else{root.setAttribute('data-variant',v);root.removeAttribute('data-hybrid');}
@@ -39,7 +39,7 @@
           if(saved.headWeight)root.setAttribute('data-headweight',saved.headWeight);
           if(saved.bodyWeight)root.setAttribute('data-bodyweight',saved.bodyWeight);
           if(saved.density)root.setAttribute('data-density',saved.density);
-          if(saved.globeFill!=null)root.setAttribute('data-globefill',saved.globeFill);
+          if(saved.globeSize!=null)root.setAttribute('data-globesize',saved.globeSize);
         }
         if(v==='eclipse'||v==='hybrid'||v==='daylight'){
           setV(v);
@@ -176,72 +176,68 @@
       </div>
     </div>
 
-    <!-- ===== PROBLEM / SOLUTION ===== -->
-    <section class="ps reveal split" id="problem" data-screen-label="03 Problem / Solution">
+    <!-- ===== CHALLENGE + SOLUTION (merged) ===== -->
+    <section class="ps reveal split" id="problem" data-screen-label="03 Challenge &amp; Solution">
       <div class="container">
         <div class="ps-header">
-          <span class="tag">The Challenge</span>
           <h2 class="h2">Existing protocols weren't built for <em>trust.</em></h2>
           <p class="body-lg">Existing synchronization protocols — NTP, TAI, UTC, GPS — and timestamp standards like ISO 8601 and RFC 3339 are widely used, yet susceptible to manipulation and inaccuracy. They rely on centralized sources, can't be independently verified, and lack a unified global standard.</p>
         </div>
-        <div class="ps-cols">
-          <div class="ps-col">
-            <span class="ps-col-tag prob">Problem</span>
-            <h3>Centralized time is unverifiable.</h3>
-            <ul class="ps-list">
-              <li>Reliance on centralized time servers creates single points of failure</li>
-              <li>No cryptographic proof that a timestamp hasn't been altered</li>
-              <li>Inconsistent standards across jurisdictions and systems</li>
-              <li>Significant risk in finance, legal, and supply-chain sectors</li>
-            </ul>
+        <div class="ps-content">
+          <div class="ps-cols">
+            <div class="ps-col">
+              <span class="ps-col-tag prob">Problem</span>
+              <h3>Centralized time is unverifiable.</h3>
+              <ul class="ps-list">
+                <li>Reliance on centralized time servers creates single points of failure</li>
+                <li>No cryptographic proof that a timestamp hasn't been altered</li>
+                <li>Inconsistent standards across jurisdictions and systems</li>
+                <li>Significant risk in finance, legal, and supply-chain sectors</li>
+              </ul>
+            </div>
+            <div class="ps-col alt">
+              <span class="ps-col-tag sol">Solution</span>
+              <h3>Clockchain makes time verifiable.</h3>
+              <ul class="ps-list">
+                <li>A decentralized validator network eliminates any single authority</li>
+                <li>Every timestamp is cryptographically signed and provable on-chain</li>
+                <li>A single global time standard usable by any system worldwide</li>
+                <li>A permanent, auditable ledger — no record can ever be altered</li>
+              </ul>
+            </div>
           </div>
-          <div class="ps-col alt">
-            <span class="ps-col-tag sol">Solution</span>
-            <h3>Clockchain makes time verifiable.</h3>
-            <ul class="ps-list">
-              <li>A decentralized validator network eliminates any single authority</li>
-              <li>Every timestamp is cryptographically signed and provable on-chain</li>
-              <li>A single global time standard usable by any system worldwide</li>
-              <li>A permanent, auditable ledger — no record can ever be altered</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- ===== SOLUTION (three primitives) ===== -->
-    <section class="ps reveal split" id="solution" data-screen-label="04 Solution">
-      <div class="container">
-        <div class="ps-header">
-          <span class="tag">The Solution</span>
-          <h2 class="h2">Three primitives. <em>One clock.</em></h2>
-          <p class="body-lg">A decentralized physical network of trusted time sources, aggregated by AI, validated on-chain through Proof-of-Time consensus.</p>
-        </div>
-        <div class="numgrid">
-          <div class="numcard">
-            <div class="big-num">01</div>
-            <h4>Decentralized timestamping via DePIN.</h4>
-            <p>A physical infrastructure network of trusted time sources — certified atomic clocks, international standards bodies, national time institutes, and global satellite navigation systems like GPS — ensures precise, tamper-proof timestamping across every region.</p>
-            <span class="pill">DePIN · Distributed sources</span>
+          <div class="ps-subhead" id="solution">
+            <span class="tag">The Solution</span>
+            <h3 class="ps-subhead-title">Three primitives. <em>One clock.</em></h3>
+            <p class="body-lg">A decentralized physical network of trusted time sources, aggregated by AI, validated on-chain through Proof-of-Time consensus.</p>
           </div>
-          <div class="numcard">
-            <div class="big-num">02</div>
-            <h4>AI + blockchain integration.</h4>
-            <p>AI models reconcile time data across heterogeneous sources, weighting and ranking inputs in real time, then propagating the validated state to nodes worldwide for instant consensus.</p>
-            <span class="pill">Adaptive consensus · Sub-second</span>
-          </div>
-          <div class="numcard">
-            <div class="big-num">03</div>
-            <h4>Proof-of-Time consensus.</h4>
-            <p>A new consensus mechanism that aggregates time data from all global sources and validates it on-chain — ensuring accuracy and consistency across every block, every second.</p>
-            <span class="pill">PoT · On-chain validation</span>
+          <div class="numgrid">
+            <div class="numcard">
+              <div class="big-num">01</div>
+              <h4>Decentralized timestamping via DePIN.</h4>
+              <p>A physical infrastructure network of trusted time sources — certified atomic clocks, international standards bodies, national time institutes, and global satellite navigation systems like GPS — ensures precise, tamper-proof timestamping across every region.</p>
+              <span class="pill">DePIN · Distributed sources</span>
+            </div>
+            <div class="numcard">
+              <div class="big-num">02</div>
+              <h4>AI + blockchain integration.</h4>
+              <p>AI models reconcile time data across heterogeneous sources, weighting and ranking inputs in real time, then propagating the validated state to nodes worldwide for instant consensus.</p>
+              <span class="pill">Adaptive consensus · Sub-second</span>
+            </div>
+            <div class="numcard">
+              <div class="big-num">03</div>
+              <h4>Proof-of-Time consensus.</h4>
+              <p>A new consensus mechanism that aggregates time data from all global sources and validates it on-chain — ensuring accuracy and consistency across every block, every second.</p>
+              <span class="pill">PoT · On-chain validation</span>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
     <!-- ===== SERVICES ===== -->
-    <section class="services reveal split" id="services" data-screen-label="05 Services">
+    <section class="services reveal split" id="services" data-screen-label="04 Services">
       <div class="container">
         <div class="services-head">
           <span class="tag">Clockchain Services</span>
@@ -303,7 +299,7 @@
     </section>
 
     <!-- ===== NEWSROOM TEASER ===== -->
-    <section class="newsroom-teaser reveal" id="news" data-screen-label="06 Newsroom">
+    <section class="newsroom-teaser reveal" id="news" data-screen-label="05 Newsroom">
       <div class="container">
         <div class="section-head-c">
           <span class="tag">Newsroom</span>
@@ -336,7 +332,7 @@
     </section>
 
     <!-- ===== CTA ===== -->
-    <section class="cta reveal" data-screen-label="08 CTA">
+    <section class="cta reveal" data-screen-label="06 CTA">
       <div class="container">
         <div class="cta-card">
           <h2>Build with <em>time</em> you can prove.</h2>
@@ -399,14 +395,14 @@
   <script src="https://unpkg.com/three@0.128.0/examples/js/lines/LineSegments2.js"></script>
   <script src="https://unpkg.com/three@0.128.0/examples/js/lines/Line2.js"></script>
   <script src="https://unpkg.com/three@0.128.0/examples/js/lines/LineMaterial.js"></script>
-  <script src="globe.js?v=11"></script>
+  <script src="globe.js?v=12"></script>
   <script src="app.js?v=5"></script>
-  <script src="hero-orbit.js?v=12"></script>
+  <script src="hero-orbit.js?v=13"></script>
   <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
-  <script type="text/babel" src="tweaks-panel.jsx"></script>
-  <script type="text/babel" src="tweaks-app.jsx"></script>
+  <script type="text/babel" src="tweaks-panel.jsx?v=2"></script>
+  <script type="text/babel" src="tweaks-app.jsx?v=2"></script>
   <script>
     (function(){
       var btt=document.querySelector('.btt-top');

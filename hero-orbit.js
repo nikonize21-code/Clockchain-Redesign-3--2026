@@ -37,7 +37,7 @@
     canvas.width = Math.floor(W * dpr); canvas.height = Math.floor(H * dpr);
     canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    cx = W / 2; cy = Math.round(H * P.posY);  // bias the logo below the statement + CTA
+    cx = W / 2; cy = Math.round(H * (W < 640 ? 0.52 : P.posY));  // bias the logo below the statement + CTA
     if (reduceMotion || P.hold) step(0);
   }
 
@@ -157,10 +157,14 @@
     const the = phase * 2 * Math.PI;
     const thm = phase * 2 * Math.PI * P.ratio;
 
-    // Sun radius auto-fits so the (wider) orbit stays on screen
-    Rs = Math.min(W * 0.46 / (1.5 * P.width + 0.5), H * P.sizeCap);
-    const Reo = P.width * Rs;         // Earth orbit half-width (swing)
-    const Rmo = P.width * 0.5 * Rs;   // Moon orbit half-width around Earth
+    // Sun radius auto-fits so the (wider) orbit stays on screen.
+    // On phones, narrow the swing so the logo doesn't shrink to a dot.
+    const narrow = W < 640;
+    const widthEff = narrow ? 2.6 : P.width;
+    const capEff = narrow ? 0.20 : P.sizeCap;
+    Rs = Math.min(W * 0.46 / (1.5 * widthEff + 0.5), H * capEff);
+    const Reo = widthEff * Rs;         // Earth orbit half-width (swing)
+    const Rmo = widthEff * 0.5 * Rs;   // Moon orbit half-width around Earth
     const eOff = E_UP * Rs, mOff = M_UP * Rs;  // vertical offsets fixed by the logo
 
     const ex = cx + Reo * Math.sin(the);

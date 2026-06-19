@@ -8,7 +8,7 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "bodyWeight": "regular",
   "density": "comfortable",
   "heroBtn": "solid",
-  "globeFill": 20
+  "globeSize": 100
 }/*EDITMODE-END*/;
 
 function applyTweaks(t){
@@ -28,12 +28,12 @@ function applyTweaks(t){
   root.setAttribute('data-bodyweight', t.bodyWeight);
   root.setAttribute('data-density', t.density);
   root.setAttribute('data-herobtn', t.heroBtn);
-  root.setAttribute('data-globefill', t.globeFill);
-  if (typeof window.__setGlobeFill === 'function') window.__setGlobeFill(t.globeFill / 100);
+  root.setAttribute('data-globesize', t.globeSize);
+  if (typeof window.__setGlobeSize === 'function') window.__setGlobeSize(t.globeSize / 100);
   try { localStorage.setItem('clockchain-merged-tweaks-v2', JSON.stringify({
     variant: t.variant,
     accent: t.accent, displayFont: t.displayFont, bodyFont: t.bodyFont, headWeight: t.headWeight, bodyWeight: t.bodyWeight, density: t.density,
-    heroBtn: t.heroBtn, globeFill: t.globeFill
+    heroBtn: t.heroBtn, globeSize: t.globeSize
   })); } catch(e){}
   if (typeof window.__recolorGlobe === 'function') {
     // let CSS vars settle, then recolor the three.js materials
@@ -52,7 +52,7 @@ function readInitial(){
     bodyWeight: root.getAttribute('data-bodyweight') || TWEAK_DEFAULTS.bodyWeight,
     density: root.getAttribute('data-density') || TWEAK_DEFAULTS.density,
     heroBtn: root.getAttribute('data-herobtn') || TWEAK_DEFAULTS.heroBtn,
-    globeFill: (function(){ var a = parseFloat(root.getAttribute('data-globefill')); return isNaN(a) ? TWEAK_DEFAULTS.globeFill : a; })()
+    globeSize: (function(){ var a = parseFloat(root.getAttribute('data-globesize')); return isNaN(a) ? TWEAK_DEFAULTS.globeSize : a; })()
   });
 }
 
@@ -94,8 +94,8 @@ function TweaksApp(){
         onChange={(v)=>setTweak('heroBtn', v)} />
 
       <TweakSection label="Globe" />
-      <TweakSlider label="Fill opacity" value={t.globeFill} min={0} max={100} step={1} unit="%"
-        onChange={(v)=>setTweak('globeFill', v)} />
+      <TweakSlider label="Size" value={t.globeSize} min={60} max={150} step={5} unit="%"
+        onChange={(v)=>setTweak('globeSize', v)} />
     </TweaksPanel>
   );
 }

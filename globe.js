@@ -46,14 +46,16 @@
     var tilt=0.34;                 // fixed view tilt so parallels read as ellipses
     var dpr=Math.min(window.devicePixelRatio||1,2);
     var W,H,cx,cy,R;
+    var sizeF=(function(){var a=parseFloat(document.documentElement.getAttribute('data-globesize'));return isNaN(a)?1:Math.max(0.4,Math.min(2,a/100));})();
     function size(){
       W=Math.max(1,wrap.clientWidth);H=Math.max(1,wrap.clientHeight);
       canvas.width=Math.floor(W*dpr);canvas.height=Math.floor(H*dpr);
       canvas.style.width=W+'px';canvas.style.height=H+'px';
       ctx.setTransform(dpr,0,0,dpr,0,0);
-      cx=W/2;cy=H/2;R=Math.min(W,H)*0.40;
+      cx=W/2;cy=H/2;R=Math.min(W,H)*0.40*sizeF;
     }
     size();window.addEventListener('resize',size);
+    window.__setGlobeSize=function(p){sizeF=Math.max(0.4,Math.min(2,(typeof p==='number'&&!isNaN(p))?p:1));size();};
 
     function v(lon,lat){var lo=lon*Math.PI/180,la=lat*Math.PI/180;return {x:Math.cos(la)*Math.sin(lo),y:Math.sin(la),z:Math.cos(la)*Math.cos(lo)};}
     function rot(p,spin){
@@ -211,6 +213,9 @@
 
     var R=1.0;
     var globe=new THREE.Group();scene.add(globe);
+    /* globe size is driven by the Tweaks slider via window.__setGlobeSize(0.4..2). */
+    window.__setGlobeSize=function(p){var s=Math.max(0.4,Math.min(2,(typeof p==='number'&&!isNaN(p))?p:1));globe.scale.setScalar(s);};
+    (function(){var a=parseFloat(document.documentElement.getAttribute('data-globesize'));if(!isNaN(a))window.__setGlobeSize(a/100);})();
 
     /* solid fill: subtle dark gradient + faint fresnel edge glow.
        Writes depth so the back-side grid/borders are occluded -> reads as a solid globe.
