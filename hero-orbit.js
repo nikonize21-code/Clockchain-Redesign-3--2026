@@ -20,10 +20,10 @@
   const E_UP = 0.1681, M_UP = 0.4399;   // Earth up from Sun lowered by the +10% growth so Earth's TOP stays aligned with the Sun's top at syzygy; Moon up from Earth raised by the same 0.0759 so the Moon's top also stays aligned at syzygy
 
   // --- baked production settings ---
-  const P = { speed: 0.45, width: 5, holdTime: 1.5, ratio: 1, guides: false, glow: false, transparent: true,
+  const P = { speed: 0.45, width: 5, holdTime: 1.5, ratio: 3, guides: false, glow: false, transparent: true,
               rays: true, rayIntensity: 0.36, raySpeed: 0.2, rayColor: '#000000', rayHalf: 'bottom',
               green: '#00cc00', earth: '#000000', bg: '#ffffff', hold: false,
-              posY: 0.6, sizeCap: 0.135 };   // posY = logo vertical center (fraction of hero); sizeCap = max Sun radius (fraction of hero height)
+              posY: 0.5, sizeCap: 0.135 };   // posY = logo vertical center (fraction of hero); sizeCap = max Sun radius (fraction of hero height)
   let LF = 1;       // logo factor: 1 = flat two-tone logo at syzygy, 0 = full 3D spheres
   let clock = 0;    // eased master clock
   let rayTime = 0;  // independent clock for the line-burst ripple
