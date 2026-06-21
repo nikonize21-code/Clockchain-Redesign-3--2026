@@ -22,11 +22,73 @@
   // --- baked production settings ---
   const P = { speed: 0.45, width: 5, holdTime: 1.5, ratio: 3, guides: false, glow: false, transparent: true,
               rays: true, rayIntensity: 0.36, raySpeed: 0.2, rayColor: '#000000', rayHalf: 'bottom',
-              green: '#00cc00', earth: '#000000', bg: '#ffffff', hold: false,
+              green: '#00cc00', earth: '#00cc00', land: '#0a7d22', bg: '#ffffff', hold: false,
               posY: 0.5, sizeCap: 0.135 };   // posY = logo vertical center (fraction of hero); sizeCap = max Sun radius (fraction of hero height)
   let LF = 1;       // logo factor: 1 = flat two-tone logo at syzygy, 0 = full 3D spheres
   let clock = 0;    // eased master clock
   let rayTime = 0;  // independent clock for the line-burst ripple
+  let earthSpin = 0; // slow longitudinal rotation of the globe (radians)
+
+  /* ---- Earth land map ----
+     Real coastlines: rasterise the SAME world-atlas country polygons that the
+     wireframe globe in the next section uses, into an equirectangular land
+     mask. A coarse box outline is filled first so the globe shows continents
+     instantly and still works if the CDN is unreachable. ---- */
+  const MAPW = 720, MAPH = 360;
+  const landMap = new Uint8Array(MAPW * MAPH);
+  const LAND_BOXES = [
+    [48,72,-168,-90],[30,52,-126,-92],[24,50,-95,-64],[14,30,-112,-82],[7,15,-84,-77],[60,82,-52,-18],
+    [2,12,-79,-60],[-18,4,-80,-44],[-32,-16,-70,-49],[-52,-30,-74,-63],
+    [40,60,-10,28],[54,71,5,42],[36,46,-9,20],[36,44,12,30],
+    [18,35,-13,32],[8,20,-17,44],[-12,12,8,43],[-34,-10,13,40],[-26,-12,43,51],
+    [12,40,34,60],[36,72,40,140],[40,68,135,180],[20,50,60,120],[8,30,68,90],[10,28,95,110],[31,45,130,146],
+    [-9,8,95,140],[-10,5,128,150],[-38,-12,114,150],[-47,-34,166,179],[-90,-65,-180,180],
+  ];
+  (function buildBoxFallback(){
+    for (let iy = 0; iy < MAPH; iy++) {
+      const lat = 90 - (iy + 0.5) / MAPH * 180;
+      for (let ix = 0; ix < MAPW; ix++) {
+        const lon = (ix + 0.5) / MAPW * 360 - 180;
+        let v = 0;
+        for (let b = 0; b < LAND_BOXES.length; b++) { const q = LAND_BOXES[b]; if (lat>=q[0]&&lat<=q[1]&&lon>=q[2]&&lon<=q[3]) { v = 1; break; } }
+        landMap[iy * MAPW + ix] = v;
+      }
+    }
+  })();
+  // light direction (upper-left-front), matching the other spheres
+  const _Ln = Math.hypot(0.45, 0.5, 0.74), LX = -0.45/_Ln, LY = -0.5/_Ln, LZ = 0.74/_Ln;
+  let earthOff = null, earthImg = null, earthD = 0;
+
+  /* fetch the real country polygons and rasterise them into landMap (filled continents) */
+  (function loadCoastlines(){
+    fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+      .then(function(r){ return r.json(); })
+      .then(function(topo){
+        const sc=topo.transform.scale, tr=topo.transform.translate, arcs=topo.arcs;
+        function decodeArc(idx){var rev=idx<0,raw=arcs[rev?~idx:idx],out=[],x=0,y=0;for(var i=0;i<raw.length;i++){x+=raw[i][0];y+=raw[i][1];out.push([x*sc[0]+tr[0],y*sc[1]+tr[1]]);}if(rev)out.reverse();return out;}
+        function stitchRing(idxs){var pts=[];idxs.forEach(function(idx,i){var a=decodeArc(idx);pts=pts.concat(i===0?a:a.slice(1));});return pts;}
+        var rings=[];
+        topo.objects.countries.geometries.forEach(function(geom){
+          if(geom.type==='Polygon')geom.arcs.forEach(function(r){rings.push(stitchRing(r));});
+          else if(geom.type==='MultiPolygon')geom.arcs.forEach(function(p){p.forEach(function(r){rings.push(stitchRing(r));});});
+        });
+        var off=document.createElement('canvas'); off.width=MAPW; off.height=MAPH;
+        var o=off.getContext('2d'); o.clearRect(0,0,MAPW,MAPH); o.fillStyle='#fff';
+        for(var ri=0; ri<rings.length; ri++){
+          var ring=rings[ri]; o.beginPath(); var started=false, prevX=null;
+          for(var i=0;i<ring.length;i++){
+            var x=(ring[i][0]+180)/360*MAPW, y=(90-ring[i][1])/180*MAPH;
+            if(prevX!==null && Math.abs(x-prevX)>MAPW*0.5){ o.closePath(); o.fill(); o.beginPath(); started=false; }  // split at the dateline
+            if(!started){ o.moveTo(x,y); started=true; } else { o.lineTo(x,y); }
+            prevX=x;
+          }
+          o.closePath(); o.fill();
+        }
+        var d=o.getImageData(0,0,MAPW,MAPH).data;
+        for(var p=0;p<MAPW*MAPH;p++){ landMap[p] = d[p*4] > 100 ? 1 : 0; }
+        if (reduceMotion || P.hold) step(0);
+      }).catch(function(){});
+  })();
 
   let W, H, cx, cy, Rs, dpr;
   function resize() {
@@ -48,9 +110,68 @@
   const lighten = (hex, t) => mix(hex, t, [255,255,255]);
   const darken  = (hex, t) => mix(hex, t, [0,0,0]);
 
+  // --- a photoreal-ish rotating globe: orthographic projection of the land map with day-side shading ---
+  function drawEarth(x, y, r, spin) {
+    const D = Math.max(16, Math.round(Math.min(2 * r * dpr, 320)));
+    if (!earthOff) earthOff = document.createElement('canvas');
+    if (earthD !== D) {
+      earthOff.width = earthOff.height = D;
+      earthImg = earthOff.getContext('2d').createImageData(D, D);
+      earthD = D;
+    }
+    const data = earthImg.data, rad = D / 2;
+    const spinDeg = spin * 180 / Math.PI;
+    const OCR = 199, OCG = 205, OCB = 209;        // ocean = light gray
+    const LDR = 8, LDG = 92, LDB = 26;            // land  = deep green #085c1a
+    const amb = 0.30;                              // ambient (night side floor)
+    for (let j = 0; j < D; j++) {
+      const ny = (j + 0.5) / rad - 1;
+      for (let i = 0; i < D; i++) {
+        const nx = (i + 0.5) / rad - 1;
+        const idx = (j * D + i) * 4;
+        const d2 = nx * nx + ny * ny;
+        if (d2 > 1) { data[idx + 3] = 0; continue; }
+        const nz = Math.sqrt(1 - d2);
+        const lat = Math.asin(Math.max(-1, Math.min(1, -ny))) * 57.29578;
+        let lon = Math.atan2(nx, nz) * 57.29578 + spinDeg;
+        lon = ((lon + 180) % 360 + 360) % 360 - 180;
+        let ix = ((lon + 180) / 360 * MAPW) | 0; if (ix >= MAPW) ix = MAPW - 1; if (ix < 0) ix = 0;
+        let iy = ((90 - lat) / 180 * MAPH) | 0; if (iy >= MAPH) iy = MAPH - 1; if (iy < 0) iy = 0;
+        const land = landMap[iy * MAPW + ix];
+        let diff = nx * LX + ny * LY + nz * LZ; if (diff < 0) diff = 0;
+        const shade = amb + (1 - amb) * diff;
+        let cr, cg, cb;
+        if (land) { cr = LDR * shade; cg = LDG * shade; cb = LDB * shade; }
+        else {
+          cr = OCR * shade; cg = OCG * shade; cb = OCB * shade;
+          const sp = Math.pow(diff, 14) * 90;       // ocean specular sheen
+          cr += sp; cg += sp; cb += sp;
+        }
+        const rim = d2 * d2 * d2;                   // atmosphere halo near the lit limb
+        if (diff > 0.05) { const a = rim * 70 * diff; cr += a * 0.45; cg += a; cb += a * 0.5; }
+        data[idx]   = cr > 255 ? 255 : cr;
+        data[idx+1] = cg > 255 ? 255 : cg;
+        data[idx+2] = cb > 255 ? 255 : cb;
+        data[idx+3] = 255;
+      }
+    }
+    earthOff.getContext('2d').putImageData(earthImg, 0, 0);
+    ctx.drawImage(earthOff, x - r, y - r, 2 * r, 2 * r);
+  }
+
   // --- a shaded 3D sphere (light from upper-left) ---
-  function sphere(x, y, r, baseHex, isBody) {
+  function sphere(x, y, r, baseHex, isBody, isEarth) {
     const lf = LF;
+    if (isEarth) {                                  // the rotating green globe
+      if (lf < 0.999) drawEarth(x, y, r, earthSpin);
+      if (lf > 0.001) {                             // resolve to the white logo interior at syzygy
+        ctx.globalAlpha = lf;
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+      return;
+    }
     if (P.glow && isBody && lf < 1) {
       const [rr,gg,bb] = hexToRgb(baseHex);
       const halo = ctx.createRadialGradient(x, y, r * 0.92, x, y, r * 1.55);
@@ -65,7 +186,7 @@
     g.addColorStop(0.86, darken(baseHex, 0.42));
     g.addColorStop(1.00, darken(baseHex, 0.62));
     ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill();
-    if (lf > 0.001) {  // blend toward the flat two-tone logo (pure black Earth) at the syzygy
+    if (lf > 0.001) {  // blend toward the flat logo at the syzygy
       ctx.globalAlpha = lf;
       ctx.fillStyle = isBody ? baseHex : '#000000';
       ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill();
@@ -142,6 +263,7 @@
   let last = performance.now();
   function step(dt) {
     rayTime += dt;
+    earthSpin += dt * 0.16;   // gentle planetary rotation
     // --- eased clock: one revolution per cycle, decelerating to a full stop on the logo ---
     const moveT = 7 / Math.max(P.speed, 0.05);   // seconds for one revolution
     const cycleT = moveT + P.holdTime;
@@ -183,11 +305,11 @@
 
     const bodies = [
       { x: cx, y: cy, z: 0,  r: Rs,      c: P.green, body: true  },  // Sun
-      { x: ex, y: ey, z: ez, r: ER * Rs, c: P.earth, body: false },  // Earth
+      { x: ex, y: ey, z: ez, r: ER * Rs, c: P.earth, body: false, earth: true },  // Earth
       { x: mx, y: my, z: mz, r: MR * Rs, c: P.green, body: true  },  // Moon
     ];
     bodies.sort((a, b) => a.z - b.z);
-    bodies.forEach(b => sphere(b.x, b.y, b.r, b.c, b.body));
+    bodies.forEach(b => sphere(b.x, b.y, b.r, b.c, b.body, b.earth));
   }
 
   let raf;
@@ -318,7 +440,7 @@
     panel.querySelector('[data-act="hide"]').addEventListener('click', () => { panel.classList.add('hidden'); toggle.classList.add('show'); });
     toggle.addEventListener('click', () => { panel.classList.remove('hidden'); toggle.classList.remove('show'); });
     panel.querySelector('[data-act="copy"]').addEventListener('click', (e) => {
-      const keys = ['speed','width','holdTime','ratio','guides','glow','transparent','rays','rayIntensity','raySpeed','rayColor','rayHalf','green','earth','bg','hold','posY','sizeCap'];
+      const keys = ['speed','width','holdTime','ratio','guides','glow','transparent','rays','rayIntensity','raySpeed','rayColor','rayHalf','green','earth','land','bg','hold','posY','sizeCap'];
       const fmt = (v) => typeof v === 'string' ? `'${v}'` : v;
       const out = '  const P = { ' + keys.map(k => `${k}: ${fmt(P[k])}`).join(', ') + ' };';
       // always show it in the box so it's visible no matter what the clipboard does
