@@ -15,7 +15,7 @@
     (function(){
       var root=document.documentElement;
       try{
-        var saved=JSON.parse(localStorage.getItem('clockchain-merged-tweaks-v2')||'null');
+        var saved=JSON.parse(localStorage.getItem('clockchain-merged-tweaks-v3')||'null');
         if(saved){
           if(saved.variant){if(saved.variant==='hybrid'){root.setAttribute('data-variant','daylight');root.setAttribute('data-hybrid','1');}else{root.setAttribute('data-variant',saved.variant);}}
           if(saved.accent)root.setAttribute('data-accent',saved.accent);

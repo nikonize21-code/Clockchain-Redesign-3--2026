@@ -23,7 +23,7 @@
         else{root.setAttribute('data-variant',v);root.removeAttribute('data-hybrid');}
       }
       try{
-        var saved=JSON.parse(localStorage.getItem('clockchain-merged-tweaks-v2')||'null');
+        var saved=JSON.parse(localStorage.getItem('clockchain-merged-tweaks-v3')||'null');
         if(saved){
           if(saved.variant)setV(saved.variant);
           if(saved.accent)root.setAttribute('data-accent',saved.accent);

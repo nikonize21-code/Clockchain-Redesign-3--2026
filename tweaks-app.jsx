@@ -30,7 +30,7 @@ function applyTweaks(t){
   root.setAttribute('data-herobtn', t.heroBtn);
   root.setAttribute('data-globesize', t.globeSize);
   if (typeof window.__setGlobeSize === 'function') window.__setGlobeSize(t.globeSize / 100);
-  try { localStorage.setItem('clockchain-merged-tweaks-v2', JSON.stringify({
+  try { localStorage.setItem('clockchain-merged-tweaks-v3', JSON.stringify({
     variant: t.variant,
     accent: t.accent, displayFont: t.displayFont, bodyFont: t.bodyFont, headWeight: t.headWeight, bodyWeight: t.bodyWeight, density: t.density,
     heroBtn: t.heroBtn, globeSize: t.globeSize
