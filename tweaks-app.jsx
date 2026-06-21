@@ -2,10 +2,10 @@
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "variant": "daylight",
   "accent": "bright",
-  "displayFont": "grotesk",
+  "displayFont": "inter",
   "bodyFont": "inter",
-  "headWeight": "regular",
-  "bodyWeight": "regular",
+  "headWeight": "light",
+  "bodyWeight": "light",
   "density": "comfortable",
   "heroBtn": "solid",
   "globeSize": 100
