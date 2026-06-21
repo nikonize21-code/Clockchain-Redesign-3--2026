@@ -14,7 +14,8 @@
   ];
 
   var HOLD = 5000;   // ms each title stays fully visible
-  var FADE = 600;    // ms for the fade out / fade in
+  var FADE = 1200;   // ms for the blur-fade out / in (slow, gradual)
+  var BLUR = 18;     // px of blur at the peak of the transition
 
   var reduce = window.matchMedia &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -26,8 +27,8 @@
     el.innerHTML = head + '<span class="hs-em">' + tail + '</span>';
   }
 
-  el.style.transition = 'opacity ' + FADE + 'ms ease, transform ' + FADE + 'ms ease';
-  el.style.willChange = 'opacity, transform';
+  el.style.transition = 'opacity ' + FADE + 'ms ease-in-out, filter ' + FADE + 'ms ease-in-out';
+  el.style.willChange = 'opacity, filter';
 
   var idx = 0;
   render(LINES[0]);
@@ -39,18 +40,18 @@
         render(LINES[idx]);
         return loop();
       }
-      // fade + lift out
+      // defocus + fade out
       el.style.opacity = '0';
-      el.style.transform = 'translateY(-8px)';
+      el.style.filter = 'blur(' + BLUR + 'px)';
       setTimeout(function () {
         idx = (idx + 1) % LINES.length;
         render(LINES[idx]);
-        // drop in from just below, then settle
-        el.style.transform = 'translateY(8px)';
+        // new line starts blurred, then resolves into focus
+        el.style.filter = 'blur(' + BLUR + 'px)';
         // force reflow so the next transition takes effect
         void el.offsetWidth;
         el.style.opacity = '1';
-        el.style.transform = 'translateY(0)';
+        el.style.filter = 'blur(0px)';
         loop();
       }, FADE);
     }, HOLD);
