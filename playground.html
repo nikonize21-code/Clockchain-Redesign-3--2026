@@ -1,259 +1,320 @@
-<!DOCTYPE html>
-<html lang="en" data-variant="daylight" data-accent="bright" data-font="inter" data-bodyfont="inter" data-headweight="light" data-bodyweight="light" data-density="comfortable">
+<!doctype html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Time Oracle Playground — Clockchain</title>
-  <meta name="description" content="Log a moment to the chain and get back a verifiable, second-anchored timestamp. Try the Clockchain time oracle live." />
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
-  <link rel="icon" type="image/png" sizes="512x512" href="assets/favicon-512.png" />
-  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=20" />
-  <link rel="stylesheet" href="playground.css?v=1" />
-  <script>
-    /* Honor the visitor's saved theme (variant / accent / type) so the
-       playground matches whatever they chose on the main site. */
-    (function(){
-      var root=document.documentElement;
-      function setV(v){
-        if(v==='hybrid'){root.setAttribute('data-variant','daylight');root.setAttribute('data-hybrid','1');}
-        else{root.setAttribute('data-variant',v);root.removeAttribute('data-hybrid');}
-      }
-      try{
-        var saved=JSON.parse(localStorage.getItem('clockchain-merged-tweaks-v3')||'null');
-        if(saved){
-          if(saved.variant)setV(saved.variant);
-          if(saved.accent)root.setAttribute('data-accent',saved.accent);
-          if(saved.displayFont)root.setAttribute('data-font',saved.displayFont);
-          if(saved.bodyFont)root.setAttribute('data-bodyfont',saved.bodyFont);
-          if(saved.density)root.setAttribute('data-density',saved.density);
-        }
-      }catch(e){}
-    })();
-  </script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Clockchain MCP — time your agents can prove</title>
+<meta name="description" content="Clockchain MCP gives any AI agent consensus-anchored time, tamper-evident receipts, and on-chain verification. 31 tools across 6 modules, one endpoint." />
+<meta property="og:title" content="Clockchain MCP" />
+<meta property="og:description" content="Time your agents can prove. 31 tools, one endpoint." />
+<meta property="og:type" content="website" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #ffffff;
+    --alt: #f5f5f7;
+    --ink: #1d1d1f;
+    --fg-2: #6e6e73;
+    --fg-3: #86868b;
+    --line: #e9e9ee;
+    --line-2: #d8d8df;
+    --green: #0a9d44;
+    --green-vivid: #00cc00;
+    --green-soft: rgba(10,157,68,.08);
+    --shadow: 0 1px 2px rgba(0,0,0,.04), 0 18px 50px -28px rgba(0,0,0,.22);
+    --display: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --body: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; font-weight: 300; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 28px; }
+  .mono { font-family: var(--mono); }
+  .eyebrow { font-family: var(--mono); font-size: 12px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--green); }
+  h1, h2, h3 { font-family: var(--display); letter-spacing: -.03em; font-weight: 300; }
+  .green { color: var(--green); }
+
+  /* nav */
+  nav { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,.72); backdrop-filter: saturate(180%) blur(18px); -webkit-backdrop-filter: saturate(180%) blur(18px); border-bottom: 1px solid var(--line); }
+  .nav-in { display: flex; align-items: center; justify-content: space-between; height: 62px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 700; font-size: 19px; letter-spacing: -.01em; }
+  .nav-links { display: flex; align-items: center; gap: 30px; font-size: 14px; color: var(--fg-2); }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-left { display: flex; align-items: center; gap: 12px; }
+  .tnet { font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--green); border: 1px solid var(--green); border-radius: 99px; padding: 3px 9px; }
+  .pill { background: var(--green); color: #fff; font-weight: 600; font-size: 13px; padding: 9px 18px; border-radius: 99px; transition: background .2s; }
+  .pill:hover { background: #0b8f40; }
+  .ndot { width: 7px; height: 7px; border-radius: 99px; background: var(--green); display: inline-block; margin-right: 7px; }
+
+  /* hero */
+  .hero { text-align: center; padding: 96px 0 64px; }
+  .hero .eyebrow { display: block; margin-bottom: 22px; }
+  h1 { font-size: clamp(24px, 3.6vw, 52px); line-height: 1.06; letter-spacing: -.04em; }
+  .sub { max-width: 600px; margin: 24px auto 0; font-size: 18px; color: var(--fg-2); }
+  .cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 34px; }
+  .btn { display: inline-flex; align-items: center; gap: 9px; font-weight: 600; font-size: 15px; padding: 14px 26px; border-radius: 99px; cursor: pointer; border: 1px solid transparent; transition: all .2s; }
+  .btn-green { background: var(--green); color: #fff; }
+  .btn-green:hover { background: #0b8f40; transform: translateY(-1px); }
+  .btn-ghost { background: var(--bg); color: var(--ink); border-color: var(--line-2); }
+  .btn-ghost:hover { border-color: var(--ink); }
+  .endpoint { display: inline-flex; align-items: center; gap: 12px; margin-top: 34px; background: var(--alt); border: 1px solid var(--line); border-radius: 99px; padding: 9px 8px 9px 16px; font-size: 13px; }
+  .endpoint code { font-family: var(--mono); color: var(--ink); }
+  .endpoint button { font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--green); background: #fff; border: 1px solid var(--line); border-radius: 99px; padding: 6px 12px; cursor: pointer; }
+  .endpoint button:hover { border-color: var(--green); }
+
+  /* stat strip */
+  .strip { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--alt); }
+  .strip-in { display: flex; flex-wrap: wrap; }
+  .stat { flex: 1; min-width: 140px; text-align: center; padding: 15px 14px; border-left: 1px solid var(--line); }
+  .stat:first-child { border-left: none; }
+  .stat .k { font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--fg-3); }
+  .stat .v { font-family: var(--display); font-size: 26px; font-weight: 600; margin-top: 8px; }
+
+  /* sections */
+  section { padding: 100px 0; }
+  section.tint { background: var(--alt); }
+  .head { text-align: center; margin-bottom: 56px; }
+  .head .eyebrow { display: block; margin-bottom: 14px; }
+  .head h2 { font-size: clamp(30px, 4.5vw, 44px); }
+  .head p { color: var(--fg-2); margin-top: 12px; font-size: 17px; }
+
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .card { background: var(--bg); border: 1px solid var(--line); border-radius: 16px; padding: 26px; transition: box-shadow .25s, transform .25s; }
+  .card:hover { box-shadow: var(--shadow); transform: translateY(-3px); }
+  .card .i { font-family: var(--mono); font-size: 12px; color: var(--green); letter-spacing: .1em; }
+  .card h3 { font-size: 21px; margin: 12px 0 10px; }
+  .card p { color: var(--fg-2); font-size: 14.5px; line-height: 1.6; }
+
+  .tenets { display: grid; grid-template-columns: repeat(3, 1fr); gap: 44px; }
+  .tenet h3 { font-size: 20px; margin-bottom: 10px; }
+  .tenet h3 .n { font-family: var(--mono); color: var(--green); font-size: 13px; margin-right: 8px; }
+  .tenet p { color: var(--fg-2); font-size: 15px; }
+
+  /* install */
+  .install { max-width: 820px; margin: 0 auto; }
+  .steps { list-style: none; display: flex; flex-direction: column; gap: 30px; }
+  .step { display: flex; gap: 18px; }
+  .sn { flex: none; width: 30px; height: 30px; border-radius: 99px; background: var(--green-soft); color: var(--green); font-family: var(--display); font-weight: 600; display: grid; place-items: center; font-size: 15px; }
+  .sbody { flex: 1; min-width: 0; }
+  .sbody h4 { font-family: var(--display); font-size: 18px; font-weight: 600; margin-bottom: 6px; }
+  .sbody p { color: var(--fg-2); font-size: 14.5px; }
+  .sbody p a { color: var(--green); }
+  .sbody em { color: var(--ink); font-style: italic; }
+  .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 14px 0 12px; }
+  .tabbtn { font-size: 13px; padding: 8px 15px; border-radius: 99px; border: 1px solid var(--line-2); background: var(--bg); color: var(--fg-2); cursor: pointer; }
+  .tabbtn.active { border-color: var(--green); background: var(--green-soft); color: #0b8f40; font-weight: 600; }
+  .substep { color: var(--fg-2); font-size: 13.5px; margin-bottom: 12px; }
+  .byok { margin-top: 16px; border-top: 1px solid var(--line); padding-top: 14px; }
+  .byok summary { cursor: pointer; font-size: 13.5px; font-weight: 500; color: var(--green); list-style: none; }
+  .byok summary::-webkit-details-marker { display: none; }
+  .byok summary::before { content: "+ "; }
+  .byok[open] summary::before { content: "– "; }
+  .byok em { font-style: italic; }
+  .code { position: relative; background: #0c0e10; border-radius: 12px; padding: 16px 18px; }
+  .code pre { margin: 0; overflow-x: auto; }
+  .code code { font-family: var(--mono); font-size: 12.5px; line-height: 1.6; color: #e6e9ee; white-space: pre; }
+  .code .cpy { position: absolute; top: 10px; right: 10px; background: var(--green); color: #fff; border: none; font-weight: 600; font-size: 11px; padding: 6px 12px; border-radius: 7px; cursor: pointer; }
+  .code .cpy:hover { background: #0b8f40; }
+  .hint { color: var(--fg-3); font-size: 12.5px; margin-top: 10px; }
+  .install .note { color: var(--fg-3); font-size: 13.5px; margin-top: 32px; line-height: 1.7; text-align: center; }
+  .install .note a { color: var(--green); }
+
+  /* footer */
+  footer { border-top: 1px solid var(--line); padding: 48px 0 64px; }
+  .foot-row { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .foot-links { display: flex; gap: 26px; font-size: 14px; color: var(--fg-2); }
+  .foot-links a:hover { color: var(--green); }
+  .disclaimer { color: var(--fg-3); font-size: 12px; line-height: 1.7; max-width: 660px; margin-top: 26px; }
+
+  .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(16px); background: var(--ink); color: #fff; font-size: 13px; font-weight: 500; padding: 11px 20px; border-radius: 99px; opacity: 0; transition: .25s; z-index: 80; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .demo-frame { max-width: 980px; margin: 0 auto; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; box-shadow: var(--shadow); background: var(--bg) url('https://clockchain-research.vercel.app/mcp-demo-poster.png') center/cover no-repeat; }
+  .demo-frame video { width: 100%; display: block; aspect-ratio: 16 / 9; opacity: 0; transition: opacity .45s ease; }
+  .demo-frame video.playing { opacity: 1; }
+  @media (max-width: 760px) { .grid, .tenets { grid-template-columns: 1fr; } .nav-links a:not(.pill) { display: none; } }
+</style>
 </head>
-<body class="pg-page">
-
-  <a class="skip-link" href="#pg-workspace">Skip to the playground</a>
-
-  <!-- ===== NAV (links back to the main site) ===== -->
-  <nav class="nav scrolled">
-    <a class="nav-logo" href="index.html" aria-label="Clockchain — home"><img src="assets/clockchain-logo-full.png" alt="Clockchain" /></a>
-    <ul class="nav-links">
-      <li><a href="index.html#problem">Challenge</a></li>
-      <li><a href="index.html#solution">Solution</a></li>
-      <li><a href="index.html#services">Services</a></li>
-      <li><a href="index.html#blog">Blog</a></li>
-      <li><a href="index.html#news">News</a></li>
-      <li><a href="https://services.clockchain.network/" target="_blank" rel="noopener">Testnet</a></li>
-    </ul>
-    <div class="nav-right">
-      <nav class="nav-socials" aria-label="Clockchain on social media">
-        <a href="https://t.me/ClockchainTime" target="_blank" rel="noopener" aria-label="Clockchain on Telegram"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.04 15.4 8.9 19.2c.4 0 .57-.17.77-.37l1.86-1.78 3.86 2.83c.71.39 1.21.18 1.4-.65l2.53-11.85c.23-1.04-.38-1.45-1.06-1.2L3.5 10.18c-1 .39-.99.94-.18 1.19l3.66 1.14 8.5-5.36c.4-.25.77-.11.47.14"/></svg></a>
-        <a href="https://discord.com/invite/daHCN5qMtN" target="_blank" rel="noopener" aria-label="Clockchain on Discord"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.363 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg></a>
-        <a href="https://x.com/clockchain_time" target="_blank" rel="noopener" aria-label="Clockchain on X (formerly Twitter)"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.66l-5.214-6.817-5.967 6.817H1.677l7.73-8.835L1.254 2.25h6.829l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-      </nav>
-      <a class="nav-cta" href="mailto:info@d4d.group">Contact<svg viewBox="0 0 24 24"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
-      <button class="nav-burger" id="nav-burger" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span><span></span></button>
-    </div>
-  </nav>
-
-  <!-- ===== MOBILE MENU ===== -->
-  <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
-    <nav class="mm-links" aria-label="Primary (mobile)">
-      <a href="index.html#problem">Challenge</a>
-      <a href="index.html#solution">Solution</a>
-      <a href="index.html#services">Services</a>
-      <a href="index.html#blog">Blog</a>
-      <a href="index.html#news">News</a>
-      <a href="https://services.clockchain.network/" target="_blank" rel="noopener">Testnet</a>
-    </nav>
-    <a class="mm-cta" href="mailto:info@d4d.group">Contact us<svg viewBox="0 0 24 24"><path d="M7 17L17 7M9 7h8v8"/></svg></a>
-    <nav class="mm-socials" aria-label="Clockchain on social media">
-      <a href="https://t.me/ClockchainTime" target="_blank" rel="noopener" aria-label="Clockchain on Telegram"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.04 15.4 8.9 19.2c.4 0 .57-.17.77-.37l1.86-1.78 3.86 2.83c.71.39 1.21.18 1.4-.65l2.53-11.85c.23-1.04-.38-1.45-1.06-1.2L3.5 10.18c-1 .39-.99.94-.18 1.19l3.66 1.14 8.5-5.36c.4-.25.77-.11.47.14"/></svg></a>
-      <a href="https://discord.com/invite/daHCN5qMtN" target="_blank" rel="noopener" aria-label="Clockchain on Discord"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.363 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg></a>
-      <a href="https://x.com/clockchain_time" target="_blank" rel="noopener" aria-label="Clockchain on X (formerly Twitter)"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.66l-5.214-6.817-5.967 6.817H1.677l7.73-8.835L1.254 2.25h6.829l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-    </nav>
+<body>
+<nav><div class="wrap nav-in">
+  <div class="nav-left"><a class="brand" href="index.html" aria-label="Clockchain"><img src="assets/clockchain-logo-full.png" alt="Clockchain" style="height:34px;width:auto;display:block;" /></a><a class="tnet" href="https://services.clockchain.network/" target="_blank" rel="noopener">Testnet</a></div>
+  <div class="nav-links">
+    <a href="#demo">Demo</a>
+    <a href="#modules">Modules</a>
+    <a href="#install">Install</a>
+    <a href="https://clockchain-research.vercel.app/dashboard"><span class="ndot"></span>Status</a>
+    <a href="https://github.com/thetangstr/clockchain-developer-tools">Docs</a>
+    <a class="pill" href="#install">Add to your agent</a>
   </div>
+</div></nav>
 
-  <main id="main-content">
-    <div class="container-wide">
+<header class="hero"><div class="wrap">
+  <span class="eyebrow">Model Context Protocol · Testnet</span>
+  <h1>Time your agents can <span class="green">prove.</span></h1>
+  <p class="sub">Clockchain MCP gives any AI agent consensus-anchored time, tamper-evident receipts, and on-chain verification — 31 tools across six modules, one endpoint.</p>
+  <div class="cta">
+    <a class="btn btn-green" href="#install">Add to your agent</a>
+    <a class="btn btn-ghost" href="https://clockchain-research.vercel.app/dashboard">View live status</a>
+  </div>
+  <div class="endpoint">
+    <code>mcp.clockchain.network/mcp</code>
+    <button onclick="copyText('https://mcp.clockchain.network/mcp','Endpoint copied')">Copy</button>
+  </div>
+</div></header>
 
-      <!-- ===== HERO ===== -->
-      <header class="pg-hero">
-        <span class="pg-eyebrow">
-          <span class="live-dot"></span>Time Stamping
-          <span class="sep">·</span>
-          <span class="pg-clock" id="t-utc">--:--:-- UTC</span>
-        </span>
-        <h1>Log something to the chain — <em>get back proof.</em></h1>
-        <p class="body-lg">Enter anything you want to anchor in time. Clockchain writes it to a second-anchored block and returns a verifiable timestamp no one can alter. This is a live, in-browser demo using simulated responses.</p>
-      </header>
+<div class="strip"><div class="wrap strip-in">
+  <div class="stat"><div class="k">Tools</div><div class="v">31</div></div>
+  <div class="stat"><div class="k">Modules</div><div class="v">6</div></div>
+  <div class="stat"><div class="k">Transport</div><div class="v">StreamableHTTP</div></div>
+  <div class="stat"><div class="k">Network</div><div class="v">Testnet</div></div>
+</div></div>
 
-      <!-- ===== WORKSPACE ===== -->
-      <div class="pg-workspace" id="pg-workspace" data-mview="result">
+<section id="demo"><div class="wrap">
+  <div class="head">
+    <span class="eyebrow">See it work</span>
+    <h2>Anchor, verify, tamper-detect — live</h2>
+    <p>An agent acts, the action is anchored on a real testnet block, the receipt verifies — and a one-byte change is rejected.</p>
+  </div>
+  <div class="demo-frame">
+    <video id="demoVideo" src="https://clockchain-research.vercel.app/mcp-demo.mp4" poster="https://clockchain-research.vercel.app/mcp-demo-poster.png" loop muted playsinline preload="metadata"></video>
+  </div>
+</div></section>
 
-        <!-- Input zone -->
-        <section class="pg-zone pg-zone--input" aria-label="Request input">
-          <div class="pg-card pg-input-card">
-            <span class="pg-zone-label">Your request</span>
-            <label class="pg-field-label" for="pg-input">What do you want to log?</label>
-            <div class="pg-input-wrap">
-              <input class="pg-input" id="pg-input" type="text" autocomplete="off" spellcheck="false"
-                     value="Q3 board resolution — final signed copy"
-                     placeholder="e.g. Contract v4 — executed copy" />
-            </div>
-            <p class="pg-input-hint">Anything works — a document name, a hash, a sensor reading. We send it as <code>{ "data": "…" }</code>.</p>
-            <div class="pg-run-row">
-              <button class="btn pg-run" id="pg-run" type="button">
-                Try it Live
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-              </button>
-              <span class="pg-run-note">Simulated response · no data leaves your browser</span>
-            </div>
-          </div>
-        </section>
+<section id="modules"><div class="wrap">
+  <div class="head">
+    <span class="eyebrow">The surface</span>
+    <h2>Six modules</h2>
+    <p>Every tool is typed, idempotent where it writes, and degrades with grace.</p>
+  </div>
+  <div class="grid">
+    
+    <div class="card"><div class="i">01</div><h3>Time</h3><p>Consensus block time and height — the network's consented clock, not a single server's. Provable after the fact.</p></div>
+    <div class="card"><div class="i">02</div><h3>Notarization</h3><p>Anchor any hash to an append-only ledger, then verify it against the immutable on-chain block.</p></div>
+    <div class="card"><div class="i">03</div><h3>Scheduler</h3><p>Time-triggered smart contracts. Non-custodial — the caller's wallet signs; the server holds no key.</p></div>
+    <div class="card"><div class="i">04</div><h3>Audit</h3><p>Audit trails, compliance reports (EU AI Act Art. 12, SEC 17a-4, ISO 27001), and portable evidence packages.</p></div>
+    <div class="card"><div class="i">05</div><h3>Agent identity</h3><p>Attest agent actions into self-verifying receipts; resolve and verify identity valid at a point in time.</p></div>
+    <div class="card"><div class="i">06</div><h3>Commitments</h3><p>Issue, checkpoint, attest, settle — every commitment's outcome, kept or broken, on the record.</p></div>
+  </div>
+</div></section>
 
-        <!-- Mobile-only Result / Code switch -->
-        <div class="pg-mtabs" role="tablist" aria-label="Switch panel">
-          <button class="pg-mtab" type="button" role="tab" data-mview="result" aria-selected="true">Result</button>
-          <button class="pg-mtab" type="button" role="tab" data-mview="code" aria-selected="false">Code</button>
-        </div>
+<section class="tint"><div class="wrap">
+  <div class="head"><span class="eyebrow">Why it holds up</span><h2>Proof, not assurance</h2></div>
+  <div class="tenets">
+    <div class="tenet"><h3><span class="n">01</span>Consensus time</h3><p>Every timestamp is the network's consented block time — anyone can re-check it. No single clock to trust.</p></div>
+    <div class="tenet"><h3><span class="n">02</span>Self-verifying receipts</h3><p>A receipt carries its own payload and anchor. Recompute the hash, compare to the on-chain block. Proof, not a screenshot.</p></div>
+    <div class="tenet"><h3><span class="n">03</span>Tamper-evident</h3><p>Change one byte and verification fails. The ledger is append-only; the immutable block is authoritative.</p></div>
+  </div>
+</div></section>
 
-        <!-- Code zone -->
-        <section class="pg-zone pg-zone--code" aria-label="Equivalent API call">
-          <div class="pg-code-card">
-            <div class="pg-code-top">
-              <div class="pg-tabs" role="tablist" aria-label="Language">
-                <button class="pg-tab" type="button" role="tab" data-lang="curl" aria-selected="true">cURL</button>
-                <button class="pg-tab" type="button" role="tab" data-lang="javascript" aria-selected="false">JavaScript</button>
-                <button class="pg-tab" type="button" role="tab" data-lang="python" aria-selected="false">Python</button>
-              </div>
-              <button class="pg-copy" id="pg-copy" type="button" aria-label="Copy code">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
-                <span class="pg-copy-label">Copy</span>
-              </button>
-            </div>
-            <div class="pg-code-scroll">
-              <pre class="pg-code"><code id="pg-code"></code></pre>
-            </div>
-          </div>
-        </section>
+<section id="install"><div class="wrap install">
+  <div class="head"><span class="eyebrow">Install</span><h2>Add Clockchain to your agent</h2><p>Hosted endpoint — connect any MCP client in under a minute.</p></div>
 
-        <!-- Result zone -->
-        <section class="pg-zone pg-zone--result" aria-label="Chain response">
-          <div class="pg-card pg-result-card pg-result" id="pg-result" data-state="idle" aria-live="polite">
-            <div class="pg-result-head">
-              <span class="pg-zone-label">Chain response</span>
-              <span class="pg-state-badge"><span class="pg-bdot"></span><span class="pg-state-text">Awaiting request</span></span>
-            </div>
-
-            <!-- idle -->
-            <div class="pg-rstate pg-rstate--idle">
-              <div class="pg-idle-art">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-                <span>Press <strong>Try it Live</strong> to anchor your entry to the chain.</span>
-              </div>
-              <p class="pg-idle-sub">You'll get back a timestamp, the block it landed in, and an on-chain receipt — the same proof a real integration receives.</p>
-            </div>
-
-            <!-- loading -->
-            <div class="pg-rstate pg-rstate--loading">
-              <span class="pg-spinner" aria-hidden="true"></span>
-              <span>Anchoring to the chain…</span>
-            </div>
-
-            <!-- error -->
-            <div class="pg-rstate pg-rstate--error">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
-              <div>
-                <div class="pg-err-title">Couldn't reach the chain</div>
-                <div class="pg-err-msg" id="pg-error-msg">Something went wrong. Please try again.</div>
-                <button class="pg-retry" id="pg-retry" type="button">Retry request</button>
-              </div>
-            </div>
-
-            <!-- success -->
-            <div class="pg-rstate pg-rstate--success">
-              <div class="pg-success-grid" id="pg-success-grid"></div>
-              <div class="pg-success-foot" id="pg-success-foot"></div>
-            </div>
-          </div>
-        </section>
-
+  <ol class="steps">
+    <li class="step">
+      <span class="sn">1</span>
+      <div class="sbody">
+        <h4>Get a testnet token</h4>
+        <p>Click for an instant <b>testnet token</b> (delegated — writes spend our testnet credits, easiest for a quick test). Or bring your own <b>Clockchain API key</b> (writes spend your credits) — <a href="https://clockchain.network" target="_blank" rel="noopener">how to get one →</a></p>
+        <p><button class="cpy" id="getTokenBtn" onclick="getToken(this)" style="cursor:pointer">Get a testnet token</button></p>
+        <div class="code" id="tokenOut" hidden><button class="cpy" onclick="copyEl(this)">Copy</button><pre><code id="tokenVal"></code></pre></div>
+        <p class="hint" id="tokenHint" hidden></p>
       </div>
+    </li>
+    <li class="step">
+      <span class="sn">2</span>
+      <div class="sbody">
+        <h4>Add the server — any MCP client</h4>
+        <p class="substep">Add this to your MCP config with the token from step 1. <b>If you're an agent setting this up yourself, edit the config of the client you're already running in — don't ask which client to use.</b> The block is identical everywhere — Claude Code, Cursor, Claude Desktop, Codex, Hermes, OpenClaw:</p>
+        <div class="code"><button class="cpy" onclick="copyEl(this)">Copy</button><pre><code>{
+  "mcpServers": {
+    "clockchain": {
+      "type": "http",
+      "url": "https://mcp.clockchain.network/mcp",
+      "headers": { "x-api-key": "&lt;YOUR_TOKEN&gt;" }
+    }
+  }
+}</code></pre></div>
+        <p class="hint" style="margin-top:8px">Prefer raw settings? Endpoint <span class="mono">https://mcp.clockchain.network/mcp</span> · transport <span class="mono">HTTP</span> · header <span class="mono">x-api-key: &lt;YOUR_TOKEN&gt;</span>.</p>
+        <p class="hint" style="margin-top:4px"><b>Already have a Clockchain API key?</b> Don't put it in <span class="mono">x-api-key</span> — that's only for MCP tokens. Use the <span class="mono">x-clockchain-*</span> headers below instead.</p>
+        <p class="hint" style="margin-top:4px">Some clients' <span class="mono">mcp add</span> CLIs can't set custom headers — if so, write the config block above directly. CLI shortcut where one works (Claude Code): <span class="mono">claude mcp add clockchain --transport http https://mcp.clockchain.network/mcp --header "x-api-key: &lt;YOUR_TOKEN&gt;"</span></p>
+        <details class="byok">
+          <summary>Use your own Clockchain API key (writes spend your credits)</summary>
+          <p class="hint" style="margin:10px 0 0">Use your Clockchain credentials as headers instead of <span class="mono">x-api-key</span> — no MCP token needed. Same endpoint, your credits.</p>
+          <div class="code"><button class="cpy" onclick="copyEl(this)">Copy</button><pre><code>claude mcp add clockchain --transport http https://mcp.clockchain.network/mcp \
+  --header "x-clockchain-api-key: &lt;YOUR_CLOCKCHAIN_KEY&gt;" \
+  --header "x-clockchain-client-id: &lt;you@example.com&gt;" \
+  --header "x-clockchain-wallet-id: &lt;you@example.com&gt;"</code></pre></div>
+        </details>
+      </div>
+    </li>
+    <li class="step">
+      <span class="sn">3</span>
+      <div class="sbody">
+        <h4>Verify</h4>
+        <p>Open a <b>new</b> session, run <span class="mono">/mcp</span> (you should see <span class="mono">clockchain</span> with all 31 tools), then ask: <em>"use clockchain to get the current consensus time."</em></p>
+      </div>
+    </li>
+  </ol>
 
-      <!-- ===== SUPPORTING: what just happened ===== -->
-      <section class="pg-explain reveal">
-        <div class="pg-explain-inner">
-          <div>
-            <h2>What just <em>happened?</em></h2>
-            <a class="pg-docs-link" href="#" aria-label="Read the full documentation (coming soon)">
-              Read the full docs
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-            </a>
-          </div>
-          <div class="pg-steps">
-            <div class="pg-step">
-              <div class="pg-step-n">01</div>
-              <div>
-                <h4>Your entry was hashed and submitted</h4>
-                <p>The text you typed is sent to the logging endpoint as a small JSON payload and fingerprinted into a content hash.</p>
-              </div>
-            </div>
-            <div class="pg-step">
-              <div class="pg-step-n">02</div>
-              <div>
-                <h4>It was anchored in the current block</h4>
-                <p>Clockchain signs a new block every second. Your entry lands in the block for that exact moment, fixing it in time.</p>
-              </div>
-            </div>
-            <div class="pg-step">
-              <div class="pg-step-n">03</div>
-              <div>
-                <h4>You got back a verifiable timestamp</h4>
-                <p>The response includes the UTC timestamp, block height, and an on-chain receipt — anyone can independently verify it later.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+  <p class="note">Local (stdio) install, ERC-8004 reads, and chat-connector setup (Cowork / claude.ai) are in the <a href="https://github.com/thetangstr/clockchain-developer-tools/blob/main/INSTALL.md">full documentation</a>.</p>
+</div></section>
 
+<footer><div class="wrap">
+  <div class="foot-row">
+    <a class="brand" href="index.html" aria-label="Clockchain"><img src="assets/clockchain-logo-full.png" alt="Clockchain" style="height:26px;width:auto;display:block;" /></a>
+    <div class="foot-links">
+      <a href="https://clockchain-research.vercel.app/dashboard">Status</a>
+      <a href="https://github.com/thetangstr/clockchain-developer-tools">Docs</a>
+      <a href="https://mcp.clockchain.network/health">Health</a>
     </div>
-  </main>
+  </div>
+  <p class="disclaimer">Presently recorded on a single-validator testnet: the event hash, on-chain anchor, and consensus timestamp are real and independently verifiable. Multi-validator supermajority attestation activates at mainnet. Not yet a court-of-law evidentiary claim.</p>
+</div></footer>
 
-  <!-- ===== FOOTER ===== -->
-  <footer class="footer">
-    <div class="container-wide">
-      <div class="footer-top">
-        <div class="footer-brand">
-          <a href="index.html" aria-label="Clockchain — home" style="display:inline-block;"><img src="assets/clockchain-logo-full.png" alt="Clockchain" /></a>
-          <p class="footer-addr">D4D Sàrl<br/>Rue des Beaux-Arts 8<br/>2000 Neuchâtel · Switzerland<br/><br/>info@d4d.group</p>
-        </div>
-        <div class="footer-col"><h5>Protocol</h5><ul><li><a href="index.html#solution">Solution</a></li><li><a href="index.html#services">Services</a></li><li><a href="index.html#what">What is Clockchain</a></li></ul></div>
-        <div class="footer-col"><h5>Resources</h5><ul><li><a href="index.html#news">News</a></li><li><a href="index.html#blog">Blog</a></li><li><a href="#">Documentation</a></li><li><a href="#">Whitepaper</a></li><li><a href="#">Patent · US 12,022,015</a></li></ul></div>
-        <div class="footer-col"><h5>Network</h5><ul><li><a href="https://services.clockchain.network/" target="_blank" rel="noopener">Testnet</a></li><li><a href="playground.html">Playground</a></li><li><a href="#">Status</a></li><li><a href="mailto:info@d4d.group">Contact</a></li></ul></div>
-      </div>
-      <div class="footer-bottom">
-        <span class="footer-copy">© 2026 D4D Clockchain · All rights reserved</span>
-        <a href="index.html" class="btt-top" aria-label="Back to the main site">
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-          <span>Back to site</span>
-        </a>
-        <nav class="footer-socials" aria-label="Clockchain social media and contact">
-          <a href="https://t.me/ClockchainTime" target="_blank" rel="noopener" aria-label="Clockchain on Telegram"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.04 15.4 8.9 19.2c.4 0 .57-.17.77-.37l1.86-1.78 3.86 2.83c.71.39 1.21.18 1.4-.65l2.53-11.85c.23-1.04-.38-1.45-1.06-1.2L3.5 10.18c-1 .39-.99.94-.18 1.19l3.66 1.14 8.5-5.36c.4-.25.77-.11.47.14"/></svg></a>
-        <a href="https://discord.com/invite/daHCN5qMtN" target="_blank" rel="noopener" aria-label="Clockchain on Discord"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.363 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg></a>
-          <a href="https://x.com/clockchain_time" target="_blank" rel="noopener" aria-label="Clockchain on X (formerly Twitter)"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.66l-5.214-6.817-5.967 6.817H1.677l7.73-8.835L1.254 2.25h6.829l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-          <a href="mailto:info@d4d.group" aria-label="Email Clockchain at info@d4d.group"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2zm2 .5v.4l8 5.6 8-5.6V5.5L12 11Z"/></svg></a>
-        </nav>
-      </div>
-    </div>
-  </footer>
-
-  <script src="app.js?v=3"></script>
-  <script src="playground.js?v=1"></script>
+<div class="toast" id="toast"></div>
+<script>
+  function copyText(t, msg){ navigator.clipboard.writeText(t).then(function(){toast(msg||'Copied');}).catch(function(){toast('Copy failed — select manually');}); }
+  function copyEl(btn){ var c = btn.parentElement.querySelector('code'); copyText(c.innerText, 'Copied'); }
+  function showTab(id, btn){ var tabs = btn.closest('.tabs'); var box = tabs.parentElement;
+    box.querySelectorAll('.tabpane').forEach(function(x){ x.hidden = true; });
+    box.querySelector('#' + id).hidden = false;
+    tabs.querySelectorAll('.tabbtn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active'); }
+  function toast(m){ var e=document.getElementById('toast'); e.textContent=m; e.classList.add('show'); clearTimeout(window.__t); window.__t=setTimeout(function(){e.classList.remove('show');},1800); }
+  function getToken(btn){
+    btn.disabled = true; var old = btn.textContent; btn.textContent = 'Minting…';
+    fetch('/token', { method: 'POST' }).then(function(r){ return r.json().then(function(j){ return { ok: r.ok, j: j }; }); })
+      .then(function(res){
+        if (!res.ok) {
+          toast(res.j && res.j.message ? res.j.message : 'Could not mint a token');
+          btn.disabled = false; btn.textContent = old; return;
+        }
+        document.getElementById('tokenVal').textContent = res.j.token;
+        document.getElementById('tokenOut').hidden = false;
+        var hint = document.getElementById('tokenHint');
+        hint.textContent = 'Testnet token — expires ' + (res.j.expires_at || '').slice(0,10) + '. Use it as x-api-key in the config below.';
+        hint.hidden = false;
+        btn.textContent = 'New token';
+        btn.disabled = false;
+        toast('Token ready — copy it into the config');
+      })
+      .catch(function(){ toast('Network error minting token'); btn.disabled = false; btn.textContent = old; });
+  }
+  (function(){
+    var v = document.getElementById('demoVideo'); if(!v) return;
+    v.addEventListener('playing', function(){ v.classList.add('playing'); });
+    var tryPlay = function(){ var p = v.play(); if (p && p.catch) p.catch(function(){}); };
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){ if (e.isIntersecting) { tryPlay(); } else { v.pause(); } });
+      }, { threshold: 0.25 });
+      io.observe(v);
+    } else { tryPlay(); }
+  })();
+</script>
 </body>
 </html>

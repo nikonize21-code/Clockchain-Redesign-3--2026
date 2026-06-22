@@ -449,7 +449,7 @@ body.menu-open .mobile-menu{opacity:1;visibility:visible;transform:none;}
 .hero-intro-inner{position:relative;z-index:2;padding:80px 0;max-width:620px;margin-left:max(48px, calc((100vw - 1520px) / 2 + 48px));}
 .hero-intro h1{
   font-family:var(--f-display);
-  font-size:clamp(46px,5.4vw,86px);
+  font-size:clamp(24px,3.6vw,52px);
   font-weight:600;line-height:0.99;letter-spacing:-0.04em;
   color:var(--fg);margin:24px 0 26px;text-wrap:balance;
 }
@@ -1071,7 +1071,7 @@ body.menu-open .mobile-menu{opacity:1;visibility:visible;transform:none;}
   .hero-statement{top:clamp(86px,13vh,128px);width:90%;}
   .hero-statement .hero-title{font-size:clamp(26px,7.6vw,34px);}
   .hero-statement p{font-size:clamp(16px,4.6vw,20px);line-height:1.4;margin-top:12px;}
-  .hero-intro h1{font-size:clamp(38px,10.5vw,52px);}
+  .hero-intro h1{font-size:clamp(26px,7.6vw,34px);}
   .hero-intro .hero-sub{font-size:16px;max-width:none;}
   .hero-intro-inner{padding:84px 20px 16px;}
   .hero-intro .hero-visual{height:84vw;min-height:280px;}
