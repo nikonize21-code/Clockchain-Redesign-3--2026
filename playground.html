@@ -45,6 +45,12 @@
   .nav-links { display: flex; align-items: center; gap: 30px; font-size: 14px; color: var(--fg-2); }
   .nav-links a:hover { color: var(--ink); }
   .nav-left { display: flex; align-items: center; gap: 12px; }
+  .nav-burger { display: none; flex-direction: column; gap: 5px; width: 42px; height: 42px; align-items: center; justify-content: center; background: none; border: 0; cursor: pointer; margin: -8px -8px -8px 0; }
+  .nav-burger span { display: block; width: 22px; height: 2px; background: var(--ink); border-radius: 2px; transition: transform .25s ease, opacity .2s ease; }
+  .nav-burger[aria-expanded="true"] span:nth-child(1){ transform: translateY(7px) rotate(45deg); }
+  .nav-burger[aria-expanded="true"] span:nth-child(2){ opacity: 0; }
+  .nav-burger[aria-expanded="true"] span:nth-child(3){ transform: translateY(-7px) rotate(-45deg); }
+  .nav-drop { display: none; }
   .tnet { font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--green); border: 1px solid var(--green); border-radius: 99px; padding: 3px 9px; }
   .pill { background: var(--green); color: #fff; font-weight: 600; font-size: 13px; padding: 9px 18px; border-radius: 99px; transition: background .2s; }
   .pill:hover { background: #0b8f40; }
@@ -130,18 +136,31 @@
   .foot-links a:hover { color: var(--green); }
   .disclaimer { color: var(--fg-3); font-size: 12px; line-height: 1.7; max-width: 660px; margin-top: 26px; }
 
+  @media (max-width: 560px) {
+    .brand img { height: 32px !important; }
+  }
   .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(16px); background: var(--ink); color: #fff; font-size: 13px; font-weight: 500; padding: 11px 20px; border-radius: 99px; opacity: 0; transition: .25s; z-index: 80; }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   .demo-frame { max-width: 980px; margin: 0 auto; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; box-shadow: var(--shadow); background: var(--bg) url('https://clockchain-research.vercel.app/mcp-demo-poster.png') center/cover no-repeat; }
   .demo-frame video { width: 100%; display: block; aspect-ratio: 16 / 9; opacity: 0; transition: opacity .45s ease; }
   .demo-frame video.playing { opacity: 1; }
-  @media (max-width: 760px) { .grid, .tenets { grid-template-columns: 1fr; } .nav-links a:not(.pill) { display: none; } }
+  @media (max-width: 1000px) {
+    .grid, .tenets { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+    .nav-burger { display: flex; }
+    .nav-drop { display: flex; flex-direction: column; padding: 8px 28px 20px; background: rgba(255,255,255,.97); backdrop-filter: saturate(180%) blur(18px); -webkit-backdrop-filter: saturate(180%) blur(18px); border-bottom: 1px solid var(--line); }
+    .nav-drop[hidden] { display: none; }
+    .nav-drop a { display: flex; align-items: center; font-size: 16px; color: var(--ink); padding: 14px 2px; border-bottom: 1px solid var(--line); }
+    .nav-drop a:hover { color: var(--green); }
+    .nav-drop .pill { justify-content: center; color: #fff; background: var(--green); border-bottom: 0; margin-top: 14px; padding: 14px 18px; border-radius: 99px; font-weight: 600; }
+    .nav-drop .pill:hover { color: #fff; }
+  }
 </style>
 </head>
 <body>
 <nav><div class="wrap nav-in">
-  <div class="nav-left"><a class="brand" href="index.html" aria-label="Clockchain"><img src="assets/clockchain-logo-full.png" alt="Clockchain" style="height:34px;width:auto;display:block;" /></a><a class="tnet" href="https://services.clockchain.network/" target="_blank" rel="noopener">Testnet</a></div>
+  <div class="nav-left"><a class="brand" href="index.html" aria-label="Clockchain"><img src="assets/clockchain-logo-full.png" alt="Clockchain" style="height:44px;width:auto;display:block;" /></a><a class="tnet" href="https://services.clockchain.network/" target="_blank" rel="noopener">Testnet</a></div>
   <div class="nav-links">
     <a href="#demo">Demo</a>
     <a href="#modules">Modules</a>
@@ -150,6 +169,15 @@
     <a href="https://github.com/thetangstr/clockchain-developer-tools">Docs</a>
     <a class="pill" href="#install">Add to your agent</a>
   </div>
+  <button class="nav-burger" id="navBurger" aria-label="Open menu" aria-expanded="false" aria-controls="navDrop"><span></span><span></span><span></span></button>
+</div>
+<div class="nav-drop" id="navDrop" hidden>
+  <a href="#demo">Demo</a>
+  <a href="#modules">Modules</a>
+  <a href="#install">Install</a>
+  <a href="https://clockchain-research.vercel.app/dashboard"><span class="ndot"></span>Status</a>
+  <a href="https://github.com/thetangstr/clockchain-developer-tools">Docs</a>
+  <a class="pill" href="#install">Add to your agent</a>
 </div></nav>
 
 <header class="hero"><div class="wrap">
@@ -285,6 +313,16 @@
     tabs.querySelectorAll('.tabbtn').forEach(function(b){ b.classList.remove('active'); });
     btn.classList.add('active'); }
   function toast(m){ var e=document.getElementById('toast'); e.textContent=m; e.classList.add('show'); clearTimeout(window.__t); window.__t=setTimeout(function(){e.classList.remove('show');},1800); }
+  (function(){
+    var b=document.getElementById('navBurger'), d=document.getElementById('navDrop');
+    if(!b||!d) return;
+    b.addEventListener('click', function(){
+      var open = d.hasAttribute('hidden');
+      if(open){ d.removeAttribute('hidden'); b.setAttribute('aria-expanded','true'); b.setAttribute('aria-label','Close menu'); }
+      else { d.setAttribute('hidden',''); b.setAttribute('aria-expanded','false'); b.setAttribute('aria-label','Open menu'); }
+    });
+    d.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ d.setAttribute('hidden',''); b.setAttribute('aria-expanded','false'); b.setAttribute('aria-label','Open menu'); }); });
+  })();
   function getToken(btn){
     btn.disabled = true; var old = btn.textContent; btn.textContent = 'Minting…';
     fetch('/token', { method: 'POST' }).then(function(r){ return r.json().then(function(j){ return { ok: r.ok, j: j }; }); })
